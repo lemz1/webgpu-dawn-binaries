@@ -24,14 +24,14 @@ jobs:
           ref: binaries-source
           persist-credentials: false
 
-      - name: Checkout Master
+      - name: Checkout Main
         uses: actions/checkout@v3
         with:
           path: dst
-          ref: master
+          ref: main
           persist-credentials: false
 
-      - name: Remove Old Content From Master
+      - name: Remove Old Content From Main
         shell: pwsh
         working-directory: dst
         run: |
