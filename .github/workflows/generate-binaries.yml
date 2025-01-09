@@ -35,7 +35,7 @@ jobs:
         shell: pwsh
         working-directory: dst
         run: |
-          $foldersToRemove = @("dawn")
+          $foldersToRemove = @("webgpu")
           foreach ($folder in $foldersToRemove) {
               $fullPath = Join-Path $PWD.Path $folder
               if (Test-Path $fullPath) {
@@ -58,7 +58,7 @@ jobs:
       - name: Copy Dawn Install
         shell: pwsh
         run: |
-          Copy-Item -Path src/dawn/install -Destination dst/dawn -Recurse
+          Copy-Item -Path src/dawn/install -Destination dst/webgpu -Recurse
 
       - name: Push to binaries branch
         working-directory: dst
