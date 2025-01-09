@@ -1,0 +1,71 @@
+name: Build and Push Binaries
+
+on:
+  push:
+    branches:
+      - binaries-source
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Install Windows SDK
+        uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
+        with:
+          sdk-version: 22621
+
+      - name: Setup MSVC
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Checkout Binaries-Source
+        uses: actions/checkout@v3
+        with:
+          path: src
+          ref: binaries-source
+          persist-credentials: false
+
+      - name: Checkout Master
+        uses: actions/checkout@v3
+        with:
+          path: dst
+          ref: master
+          persist-credentials: false
+
+      - name: Remove Old Content From Master
+        shell: pwsh
+        working-directory: dst
+        run: |
+          $foldersToRemove = @("dawn")
+          foreach ($folder in $foldersToRemove) {
+              $fullPath = Join-Path $PWD.Path $folder
+              if (Test-Path $fullPath) {
+                  Remove-Item -Path $fullPath -Recurse -Force
+              }
+          }
+
+      - name: Init Submodules
+        working-directory: src
+        run: |
+          git submodule update --init
+
+      - name: Build Dawn
+        working-directory: src/dawn
+        run: |
+          cmake -S . -B out -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake --build out --config Release
+          cmake --install out --prefix install
+
+      - name: Copy Dawn Install
+        shell: pwsh
+        run: |
+          Copy-Item -Path src/dawn/install -Destination dst/dawn -Recurse
+
+      - name: Push to binaries branch
+        working-directory: dst
+        run: |
+          git config --global user.name lemz1
+          git config --global user.email ${{ secrets.EMAIL }}
+          git add -A
+          git commit -m "Workflow: Push Generated Binaries"
+          git remote set-url --push origin https://x-access-token:${{ secrets.PAT }}@github.com/lemz1/WebGPU-Dawn-Binaries.git
+          git push
