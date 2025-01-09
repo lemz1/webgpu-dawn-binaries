@@ -7,15 +7,31 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Install Windows SDK
+        if: matrix.os == 'windows-latest'
         uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
         with:
           sdk-version: 22621
 
       - name: Setup MSVC
+        if: matrix.os == 'windows-latest'
         uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+
+      - name: Install macOS dependencies
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install cmake ninja
 
       - name: Checkout Binaries-Source
         uses: actions/checkout@v3
@@ -48,17 +64,26 @@ jobs:
         run: |
           git submodule update --init
 
-      - name: Build Dawn
+      - name: Build Dawn (Windows)
+        if: matrix.os == 'windows-latest'
         working-directory: src/dawn
         run: |
           cmake -S . -B out -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
           cmake --build out --config Release
           cmake --install out --prefix install
 
+      - name: Build Dawn (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        working-directory: src/dawn
+        run: |
+          cmake -S . -B out -G Ninja -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
+          cmake --build out
+          cmake --install out --prefix install
+
       - name: Copy Dawn Install
         shell: pwsh
         run: |
-          Copy-Item -Path src/dawn/install -Destination dst/webgpu -Recurse
+          Copy-Item -Path src/dawn/install -Destination dst/webgpu/${{ matrix.os }} -Recurse
 
       - name: Push to binaries branch
         working-directory: dst
@@ -66,6 +91,6 @@ jobs:
           git config --global user.name lemz1
           git config --global user.email ${{ secrets.EMAIL }}
           git add -A
-          git commit -m "Workflow: Push Generated Binaries"
+          git commit -m "Workflow: Push Generated Binaries for ${{ matrix.os }}"
           git remote set-url --push origin https://x-access-token:${{ secrets.PAT }}@github.com/lemz1/WebGPU-Dawn-Binaries.git
           git push
