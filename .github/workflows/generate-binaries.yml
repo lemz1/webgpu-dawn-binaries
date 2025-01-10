@@ -19,9 +19,8 @@ jobs:
         with:
           sdk-version: 22621
 
-      - name: Setup MSVC
-        if: matrix.os == 'windows-latest'
-        uses: microsoft/setup-msbuild@v1.3.1
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Checkout Binaries-Source
         uses: actions/checkout@v3
@@ -57,7 +56,7 @@ jobs:
       - name: Build Dawn
         working-directory: src/dawn
         run: |
-          cmake -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake -G Ninja -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
           cmake --build out --config Release
           cmake --install out --prefix install
 
