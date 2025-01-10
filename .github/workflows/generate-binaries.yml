@@ -41,43 +41,43 @@ jobs:
           ref: main
           token: ${{ secrets.PAT }}
 
-      # - name: Remove Old Content From Main
-      #   shell: pwsh
-      #   working-directory: dst
-      #   run: |
-      #     $foldersToRemove = @("webgpu/${{ matrix.os }}")
-      #     foreach ($folder in $foldersToRemove) {
-      #         $fullPath = Join-Path $PWD.Path $folder
-      #         if (Test-Path $fullPath) {
-      #             Remove-Item -Path $fullPath -Recurse -Force
-      #         }
-      #     }
+      - name: Remove Old Content From Main
+        shell: pwsh
+        working-directory: dst
+        run: |
+          $foldersToRemove = @("webgpu/${{ matrix.os }}")
+          foreach ($folder in $foldersToRemove) {
+              $fullPath = Join-Path $PWD.Path $folder
+              if (Test-Path $fullPath) {
+                  Remove-Item -Path $fullPath -Recurse -Force
+              }
+          }
 
-      # - name: Init Submodules
-      #   working-directory: src
-      #   run: |
-      #     git submodule update --init
+      - name: Init Submodules
+        working-directory: src
+        run: |
+          git submodule update --init
 
-      # - name: Build Dawn (Windows)
-      #   if: matrix.os == 'windows-latest'
-      #   working-directory: src/dawn
-      #   run: |
-      #     cmake -G "Visual Studio 17 2022" -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
-      #     cmake --build out --config Release
-      #     cmake --install out --prefix install
+      - name: Build Dawn (Windows)
+        if: matrix.os == 'windows-latest'
+        working-directory: src/dawn
+        run: |
+          cmake -G "Visual Studio 17 2022" -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake --build out --config Release
+          cmake --install out --prefix install
 
-      # - name: Build Dawn (Linux/MacOS)
-      #   if: matrix.os != 'windows-latest'
-      #   working-directory: src/dawn
-      #   run: |
-      #     cmake -G "Ninja" -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
-      #     cmake --build out --config Release
-      #     cmake --install out --prefix install
+      - name: Build Dawn (Linux/MacOS)
+        if: matrix.os != 'windows-latest'
+        working-directory: src/dawn
+        run: |
+          cmake -G "Ninja" -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake --build out --config Release
+          cmake --install out --prefix install
 
-      # - name: Copy Dawn Install
-      #   shell: pwsh
-      #   run: |
-      #     Copy-Item -Path src/dawn/install -Destination dst/webgpu/${{ matrix.os }} -Recurse
+      - name: Copy Dawn Install
+        shell: pwsh
+        run: |
+          Copy-Item -Path src/dawn/install -Destination dst/webgpu/${{ matrix.os }} -Recurse
 
       - name: Push Main
         working-directory: dst
