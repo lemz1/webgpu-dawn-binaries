@@ -26,8 +26,17 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
-          sudo apt-get install pkg-config
-          sudo apt-get install libxrandr-dev libxinerama-dev libxcursor-dev mesa-common-dev libx11-xcb-dev pkg-config nodejs npm
+          sudo apt-get update
+          sudo apt-get install -y pkg-config \
+              libxrandr-dev \
+              libxinerama-dev \
+              libxcursor-dev \
+              mesa-common-dev \
+              libx11-xcb-dev \
+              libxi-dev \
+              nodejs \
+              npm
+
 
       - name: Install Ninja
         if: matrix.os != 'windows-latest'
