@@ -32,14 +32,14 @@ jobs:
         with:
           path: src
           ref: binaries-source
-          persist-credentials: false
+          token: ${{ secrets.PAT }}
 
       - name: Checkout Main
         uses: actions/checkout@v3
         with:
           path: dst
           ref: main
-          persist-credentials: false
+          token: ${{ secrets.PAT }}
 
       - name: Remove Old Content From Main
         shell: pwsh
