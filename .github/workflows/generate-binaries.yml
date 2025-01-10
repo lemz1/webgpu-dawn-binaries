@@ -74,4 +74,6 @@ jobs:
           git add -A
           git commit -m "Workflow: Push Generated Binaries for ${{ matrix.os }}"
           git remote set-url --push origin https://x-access-token:${{ secrets.PAT }}@github.com/lemz1/WebGPU-Dawn-Binaries.git
+          git fetch --all
+          git pull
           git push
