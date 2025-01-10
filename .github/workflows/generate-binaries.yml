@@ -89,7 +89,7 @@ jobs:
           git fetch --all
           git pull
 
-          if git diff-index --quiet HEAD --; then
+          if (git diff-index --quiet HEAD --); then
             echo "No changes to commit. Skipping push."
           else
             git commit -m "Workflow: Push Generated Binaries for ${{ matrix.os }}"
