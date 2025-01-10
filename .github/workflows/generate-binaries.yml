@@ -79,7 +79,7 @@ jobs:
         run: |
           Copy-Item -Path src/dawn/install -Destination dst/webgpu/${{ matrix.os }} -Recurse
 
-      - name: Push to binaries branch
+      - name: Push Main
         working-directory: dst
         run: |
           git config --global user.name lemz1
