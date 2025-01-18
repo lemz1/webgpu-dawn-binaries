@@ -1,0 +1,113 @@
+name: Build and Push Binaries
+
+on:
+  push:
+    branches:
+      - binaries-source
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install Windows SDK
+        if: matrix.os == 'windows-latest'
+        uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
+        with:
+          sdk-version: 22621
+
+      - name: Setup MSVC
+        if: matrix.os == 'windows-latest'
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Setup Linux
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config \
+              libxrandr-dev \
+              libxinerama-dev \
+              libxcursor-dev \
+              mesa-common-dev \
+              libx11-xcb-dev \
+              libxi-dev \
+              nodejs \
+              npm
+
+
+      - name: Install Ninja
+        if: matrix.os != 'windows-latest'
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Checkout Binaries-Source
+        uses: actions/checkout@v3
+        with:
+          path: src
+          ref: binaries-source
+          token: ${{ secrets.PAT }}
+
+      - name: Checkout Main
+        uses: actions/checkout@v3
+        with:
+          path: dst
+          ref: main
+          token: ${{ secrets.PAT }}
+
+      - name: Remove Old Content From Main
+        shell: pwsh
+        working-directory: dst
+        run: |
+          $foldersToRemove = @("webgpu/${{ matrix.os }}")
+          foreach ($folder in $foldersToRemove) {
+              $fullPath = Join-Path $PWD.Path $folder
+              if (Test-Path $fullPath) {
+                  Remove-Item -Path $fullPath -Recurse -Force
+              }
+          }
+
+      - name: Init Submodules
+        working-directory: src
+        run: |
+          git submodule update --init
+
+      - name: Build Dawn (Windows)
+        if: matrix.os == 'windows-latest'
+        working-directory: src/dawn
+        run: |
+          cmake -G "Visual Studio 17 2022" -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DTINT_BUILD_CMD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake --build out --config Release
+          cmake --install out --prefix install
+
+      - name: Build Dawn (Linux/MacOS)
+        if: matrix.os != 'windows-latest'
+        working-directory: src/dawn
+        run: |
+          cmake -G "Ninja" -S . -B out -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DDAWN_BUILD_SAMPLES=OFF -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DTINT_BUILD_CMD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release 
+          cmake --build out --config Release
+          cmake --install out --prefix install
+
+      - name: Copy Dawn Install
+        shell: pwsh
+        run: |
+          Copy-Item -Path src/dawn/install -Destination dst/webgpu/${{ matrix.os }} -Recurse
+
+      - name: Push Main
+        working-directory: dst
+        shell: bash
+        run: |
+          git config --global user.name lemz1
+          git config --global user.email ${{ secrets.EMAIL }}
+          git add -A
+
+          git fetch --all
+          git pull
+
+          if git diff-index --quiet HEAD --; then
+            echo "No changes to commit. Skipping push."
+          else
+            git commit -m "Workflow: Push Generated Binaries for ${{ matrix.os }}"
+            git push
+          fi
