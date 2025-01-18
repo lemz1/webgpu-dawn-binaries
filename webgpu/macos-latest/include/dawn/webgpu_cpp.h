@@ -158,21 +158,6 @@ enum class BufferBindingType : uint32_t {
 static_assert(sizeof(BufferBindingType) == sizeof(WGPUBufferBindingType), "sizeof mismatch for BufferBindingType");
 static_assert(alignof(BufferBindingType) == alignof(WGPUBufferBindingType), "alignof mismatch for BufferBindingType");
 
-enum class BufferMapAsyncStatus : uint32_t {
-    Success = WGPUBufferMapAsyncStatus_Success,
-    InstanceDropped = WGPUBufferMapAsyncStatus_InstanceDropped,
-    ValidationError = WGPUBufferMapAsyncStatus_ValidationError,
-    Unknown = WGPUBufferMapAsyncStatus_Unknown,
-    DeviceLost = WGPUBufferMapAsyncStatus_DeviceLost,
-    DestroyedBeforeCallback = WGPUBufferMapAsyncStatus_DestroyedBeforeCallback,
-    UnmappedBeforeCallback = WGPUBufferMapAsyncStatus_UnmappedBeforeCallback,
-    MappingAlreadyPending = WGPUBufferMapAsyncStatus_MappingAlreadyPending,
-    OffsetOutOfRange = WGPUBufferMapAsyncStatus_OffsetOutOfRange,
-    SizeOutOfRange = WGPUBufferMapAsyncStatus_SizeOutOfRange,
-};
-static_assert(sizeof(BufferMapAsyncStatus) == sizeof(WGPUBufferMapAsyncStatus), "sizeof mismatch for BufferMapAsyncStatus");
-static_assert(alignof(BufferMapAsyncStatus) == alignof(WGPUBufferMapAsyncStatus), "alignof mismatch for BufferMapAsyncStatus");
-
 enum class BufferMapState : uint32_t {
     Unmapped = WGPUBufferMapState_Unmapped,
     Pending = WGPUBufferMapState_Pending,
@@ -339,7 +324,9 @@ enum class FeatureName : uint32_t {
     AdapterPropertiesVk = WGPUFeatureName_AdapterPropertiesVk,
     R8UnormStorage = WGPUFeatureName_R8UnormStorage,
     FormatCapabilities = WGPUFeatureName_FormatCapabilities,
+    DawnFormatCapabilities = WGPUFeatureName_DawnFormatCapabilities,
     DrmFormatCapabilities = WGPUFeatureName_DrmFormatCapabilities,
+    DawnDrmFormatCapabilities = WGPUFeatureName_DawnDrmFormatCapabilities,
     Norm16TextureFormats = WGPUFeatureName_Norm16TextureFormats,
     MultiPlanarFormatNv16 = WGPUFeatureName_MultiPlanarFormatNv16,
     MultiPlanarFormatNv24 = WGPUFeatureName_MultiPlanarFormatNv24,
@@ -480,7 +467,6 @@ enum class QueueWorkDoneStatus : uint32_t {
     InstanceDropped = WGPUQueueWorkDoneStatus_InstanceDropped,
     Error = WGPUQueueWorkDoneStatus_Error,
     Unknown = WGPUQueueWorkDoneStatus_Unknown,
-    DeviceLost = WGPUQueueWorkDoneStatus_DeviceLost,
 };
 static_assert(sizeof(QueueWorkDoneStatus) == sizeof(WGPUQueueWorkDoneStatus), "sizeof mismatch for QueueWorkDoneStatus");
 static_assert(alignof(QueueWorkDoneStatus) == alignof(WGPUQueueWorkDoneStatus), "alignof mismatch for QueueWorkDoneStatus");
@@ -543,6 +529,7 @@ enum class SType : uint32_t {
     DawnWireWGSLControl = WGPUSType_DawnWireWGSLControl,
     DawnWGSLBlocklist = WGPUSType_DawnWGSLBlocklist,
     DrmFormatCapabilities = WGPUSType_DrmFormatCapabilities,
+    DawnDrmFormatCapabilities = WGPUSType_DawnDrmFormatCapabilities,
     ShaderModuleCompilationOptions = WGPUSType_ShaderModuleCompilationOptions,
     ColorTargetStateExpandResolveTextureDawn = WGPUSType_ColorTargetStateExpandResolveTextureDawn,
     RenderPassDescriptorExpandResolveRect = WGPUSType_RenderPassDescriptorExpandResolveRect,
@@ -950,22 +937,11 @@ static_assert(alignof(TextureUsage) == alignof(WGPUTextureUsage), "alignof misma
 // defined using C++ types instead. Note that when we remove these, the C++ callback info types
 // should also all be removed as they will no longer be necessary given the C++ templated
 // functions calls and setter utilities.
-using BufferMapCallback = WGPUBufferMapCallback;
 using Callback = WGPUCallback;
-using CompilationInfoCallback = WGPUCompilationInfoCallback;
-using CreateComputePipelineAsyncCallback = WGPUCreateComputePipelineAsyncCallback;
-using CreateRenderPipelineAsyncCallback = WGPUCreateRenderPipelineAsyncCallback;
 using DawnLoadCacheDataFunction = WGPUDawnLoadCacheDataFunction;
 using DawnStoreCacheDataFunction = WGPUDawnStoreCacheDataFunction;
-using DeviceLostCallback = WGPUDeviceLostCallback;
-using DeviceLostCallbackNew = WGPUDeviceLostCallbackNew;
-using ErrorCallback = WGPUErrorCallback;
 using LoggingCallback = WGPULoggingCallback;
-using PopErrorScopeCallback = WGPUPopErrorScopeCallback;
 using Proc = WGPUProc;
-using QueueWorkDoneCallback = WGPUQueueWorkDoneCallback;
-using RequestAdapterCallback = WGPURequestAdapterCallback;
-using RequestDeviceCallback = WGPURequestDeviceCallback;
 
 // Special class for booleans in order to allow implicit conversions.
 class Bool {
@@ -1165,7 +1141,7 @@ class Surface;
 class Texture;
 class TextureView;
 
-struct INTERNAL__HAVE_EMDAWNWEBGPU_HEADER;
+struct INTERNAL_HAVE_EMDAWNWEBGPU_HEADER;
 struct AdapterPropertiesD3D;
 struct AdapterPropertiesSubgroups;
 struct AdapterPropertiesVk;
@@ -1173,33 +1149,28 @@ struct BindGroupEntry;
 struct BlendComponent;
 struct BufferBindingLayout;
 struct BufferHostMappedPointer;
-struct BufferMapCallbackInfo;
 struct Color;
 struct ColorTargetStateExpandResolveTextureDawn;
-struct CompilationInfoCallbackInfo;
 struct ComputePassTimestampWrites;
 struct CopyTextureForBrowserOptions;
-struct CreateComputePipelineAsyncCallbackInfo;
-struct CreateRenderPipelineAsyncCallbackInfo;
 struct DawnWGSLBlocklist;
 struct DawnAdapterPropertiesPowerPreference;
 struct DawnBufferDescriptorErrorInfoFromWireClient;
+struct DawnDrmFormatProperties;
 struct DawnEncoderInternalUsageDescriptor;
 struct DawnExperimentalImmediateDataLimits;
 struct DawnExperimentalSubgroupLimits;
+struct DawnFormatCapabilities;
 struct DawnRenderPassColorAttachmentRenderToSingleSampled;
 struct DawnShaderModuleSPIRVOptionsDescriptor;
 struct DawnTexelCopyBufferRowAlignmentLimits;
 struct DawnTextureInternalUsageDescriptor;
 struct DawnTogglesDescriptor;
 struct DawnWireWGSLControl;
-struct DeviceLostCallbackInfo;
-struct DrmFormatProperties;
 struct Extent2D;
 struct Extent3D;
 struct ExternalTextureBindingEntry;
 struct ExternalTextureBindingLayout;
-struct FormatCapabilities;
 struct Future;
 struct InstanceFeatures;
 struct Limits;
@@ -1208,16 +1179,12 @@ struct MultisampleState;
 struct Origin2D;
 struct Origin3D;
 struct PipelineLayoutStorageAttachment;
-struct PopErrorScopeCallbackInfo;
 struct PrimitiveState;
-struct QueueWorkDoneCallbackInfo;
 struct RenderPassDepthStencilAttachment;
 struct RenderPassDescriptorExpandResolveRect;
 struct RenderPassMaxDrawCount;
 struct RenderPassTimestampWrites;
-struct RequestAdapterCallbackInfo;
 struct RequestAdapterOptions;
-struct RequestDeviceCallbackInfo;
 struct SamplerBindingLayout;
 struct ShaderModuleCompilationOptions;
 struct ShaderSourceSPIRV;
@@ -1267,7 +1234,6 @@ struct SurfaceTexture;
 struct TextureBindingLayout;
 struct TextureBindingViewDimensionDescriptor;
 struct TextureDataLayout;
-struct UncapturedErrorCallbackInfo;
 struct VertexAttribute;
 struct YCbCrVkDescriptor;
 struct AHardwareBufferProperties;
@@ -1283,8 +1249,8 @@ struct CompilationMessage;
 struct ComputePassDescriptor;
 struct ConstantEntry;
 struct DawnCacheDeviceDescriptor;
+struct DawnDrmFormatCapabilities;
 struct DepthStencilState;
-struct DrmFormatCapabilities;
 struct ExternalTextureDescriptor;
 struct FutureWaitInfo;
 struct ImageCopyBuffer;
@@ -1464,23 +1430,23 @@ struct CallbackTypeBase<std::tuple<Args...>, T> {
 
 
 template <typename... T>
-using BufferMapCallback2 = typename detail::CallbackTypeBase<std::tuple<MapAsyncStatus , StringView >, T...>::Callback;
+using BufferMapCallback = typename detail::CallbackTypeBase<std::tuple<MapAsyncStatus , StringView >, T...>::Callback;
 template <typename... T>
-using CompilationInfoCallback2 = typename detail::CallbackTypeBase<std::tuple<CompilationInfoRequestStatus , CompilationInfo const * >, T...>::Callback;
+using CompilationInfoCallback = typename detail::CallbackTypeBase<std::tuple<CompilationInfoRequestStatus , CompilationInfo const * >, T...>::Callback;
 template <typename... T>
-using CreateComputePipelineAsyncCallback2 = typename detail::CallbackTypeBase<std::tuple<CreatePipelineAsyncStatus , ComputePipeline , StringView >, T...>::Callback;
+using CreateComputePipelineAsyncCallback = typename detail::CallbackTypeBase<std::tuple<CreatePipelineAsyncStatus , ComputePipeline , StringView >, T...>::Callback;
 template <typename... T>
-using CreateRenderPipelineAsyncCallback2 = typename detail::CallbackTypeBase<std::tuple<CreatePipelineAsyncStatus , RenderPipeline , StringView >, T...>::Callback;
+using CreateRenderPipelineAsyncCallback = typename detail::CallbackTypeBase<std::tuple<CreatePipelineAsyncStatus , RenderPipeline , StringView >, T...>::Callback;
 template <typename... T>
-using PopErrorScopeCallback2 = typename detail::CallbackTypeBase<std::tuple<PopErrorScopeStatus , ErrorType , StringView >, T...>::Callback;
+using PopErrorScopeCallback = typename detail::CallbackTypeBase<std::tuple<PopErrorScopeStatus , ErrorType , StringView >, T...>::Callback;
 template <typename... T>
-using QueueWorkDoneCallback2 = typename detail::CallbackTypeBase<std::tuple<QueueWorkDoneStatus >, T...>::Callback;
+using QueueWorkDoneCallback = typename detail::CallbackTypeBase<std::tuple<QueueWorkDoneStatus >, T...>::Callback;
 template <typename... T>
-using RequestAdapterCallback2 = typename detail::CallbackTypeBase<std::tuple<RequestAdapterStatus , Adapter , StringView >, T...>::Callback;
+using RequestAdapterCallback = typename detail::CallbackTypeBase<std::tuple<RequestAdapterStatus , Adapter , StringView >, T...>::Callback;
 template <typename... T>
-using RequestDeviceCallback2 = typename detail::CallbackTypeBase<std::tuple<RequestDeviceStatus , Device , StringView >, T...>::Callback;
+using RequestDeviceCallback = typename detail::CallbackTypeBase<std::tuple<RequestDeviceStatus , Device , StringView >, T...>::Callback;
 template <typename... T>
-using DeviceLostCallback2 = typename detail::CallbackTypeBase<std::tuple<const Device&, DeviceLostReason, StringView>, T...>::Callback;
+using DeviceLostCallback = typename detail::CallbackTypeBase<std::tuple<const Device&, DeviceLostReason, StringView>, T...>::Callback;
 template <typename... T>
 using UncapturedErrorCallback = typename detail::CallbackTypeBase<std::tuple<const Device&, ErrorType, StringView>, T...>::Callback;
 
@@ -1494,23 +1460,21 @@ class Adapter : public ObjectBase<Adapter, WGPUAdapter> {
 
     inline Device CreateDevice(DeviceDescriptor const * descriptor = nullptr) const;
     inline void GetFeatures(SupportedFeatures * features) const;
-    inline ConvertibleStatus GetFormatCapabilities(TextureFormat format, FormatCapabilities * capabilities) const;
+    inline ConvertibleStatus GetFormatCapabilities(TextureFormat format, DawnFormatCapabilities * capabilities) const;
     inline ConvertibleStatus GetInfo(AdapterInfo * info) const;
     inline Instance GetInstance() const;
     inline ConvertibleStatus GetLimits(SupportedLimits * limits) const;
     inline Bool HasFeature(FeatureName feature) const;
-    inline void RequestDevice(DeviceDescriptor const * descriptor, RequestDeviceCallback callback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = RequestDeviceCallback2<T>,
+              typename Cb = RequestDeviceCallback<T>,
               typename CbChar = void (RequestDeviceStatus status, Device device, const char* message, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future RequestDevice(DeviceDescriptor const * options, CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = RequestDeviceCallback2<>,
+              typename Cb = RequestDeviceCallback<>,
               typename CbChar = std::function<void(RequestDeviceStatus status, Device device, const char* message)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future RequestDevice(DeviceDescriptor const * options, CallbackMode callbackMode, L callback) const;
-    inline Future RequestDevice(DeviceDescriptor const * options, RequestDeviceCallbackInfo callbackInfo) const;
 
 
   private:
@@ -1558,18 +1522,16 @@ class Buffer : public ObjectBase<Buffer, WGPUBuffer> {
     inline void * GetMappedRange(size_t offset = 0, size_t size = WGPU_WHOLE_MAP_SIZE) const;
     inline uint64_t GetSize() const;
     inline BufferUsage GetUsage() const;
-    inline void MapAsync(MapMode mode, size_t offset, size_t size, BufferMapCallback callback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = BufferMapCallback2<T>,
+              typename Cb = BufferMapCallback<T>,
               typename CbChar = void (MapAsyncStatus status, const char* message, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future MapAsync(MapMode mode, size_t offset, size_t size, CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = BufferMapCallback2<>,
+              typename Cb = BufferMapCallback<>,
               typename CbChar = std::function<void(MapAsyncStatus status, const char* message)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future MapAsync(MapMode mode, size_t offset, size_t size, CallbackMode callbackMode, L callback) const;
-    inline Future MapAsync(MapMode mode, size_t offset, size_t size, BufferMapCallbackInfo callbackInfo) const;
     inline void SetLabel(StringView label) const;
     inline void Unmap() const;
 
@@ -1671,18 +1633,16 @@ class Device : public ObjectBase<Device, WGPUDevice> {
     inline Buffer CreateBuffer(BufferDescriptor const * descriptor) const;
     inline CommandEncoder CreateCommandEncoder(CommandEncoderDescriptor const * descriptor = nullptr) const;
     inline ComputePipeline CreateComputePipeline(ComputePipelineDescriptor const * descriptor) const;
-    inline void CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CreateComputePipelineAsyncCallback callback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = CreateComputePipelineAsyncCallback2<T>,
+              typename Cb = CreateComputePipelineAsyncCallback<T>,
               typename CbChar = void (CreatePipelineAsyncStatus status, ComputePipeline pipeline, const char* message, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = CreateComputePipelineAsyncCallback2<>,
+              typename Cb = CreateComputePipelineAsyncCallback<>,
               typename CbChar = std::function<void(CreatePipelineAsyncStatus status, ComputePipeline pipeline, const char* message)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CallbackMode callbackMode, L callback) const;
-    inline Future CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CreateComputePipelineAsyncCallbackInfo callbackInfo) const;
     inline Buffer CreateErrorBuffer(BufferDescriptor const * descriptor) const;
     inline ExternalTexture CreateErrorExternalTexture() const;
     inline ShaderModule CreateErrorShaderModule(ShaderModuleDescriptor const * descriptor, StringView errorMessage) const;
@@ -1692,18 +1652,16 @@ class Device : public ObjectBase<Device, WGPUDevice> {
     inline QuerySet CreateQuerySet(QuerySetDescriptor const * descriptor) const;
     inline RenderBundleEncoder CreateRenderBundleEncoder(RenderBundleEncoderDescriptor const * descriptor) const;
     inline RenderPipeline CreateRenderPipeline(RenderPipelineDescriptor const * descriptor) const;
-    inline void CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CreateRenderPipelineAsyncCallback callback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = CreateRenderPipelineAsyncCallback2<T>,
+              typename Cb = CreateRenderPipelineAsyncCallback<T>,
               typename CbChar = void (CreatePipelineAsyncStatus status, RenderPipeline pipeline, const char* message, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = CreateRenderPipelineAsyncCallback2<>,
+              typename Cb = CreateRenderPipelineAsyncCallback<>,
               typename CbChar = std::function<void(CreatePipelineAsyncStatus status, RenderPipeline pipeline, const char* message)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CallbackMode callbackMode, L callback) const;
-    inline Future CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CreateRenderPipelineAsyncCallbackInfo callbackInfo) const;
     inline Sampler CreateSampler(SamplerDescriptor const * descriptor = nullptr) const;
     inline ShaderModule CreateShaderModule(ShaderModuleDescriptor const * descriptor) const;
     inline Texture CreateTexture(TextureDescriptor const * descriptor) const;
@@ -1721,18 +1679,16 @@ class Device : public ObjectBase<Device, WGPUDevice> {
     inline SharedFence ImportSharedFence(SharedFenceDescriptor const * descriptor) const;
     inline SharedTextureMemory ImportSharedTextureMemory(SharedTextureMemoryDescriptor const * descriptor) const;
     inline void InjectError(ErrorType type, StringView message) const;
-    inline void PopErrorScope(ErrorCallback oldCallback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = PopErrorScopeCallback2<T>,
+              typename Cb = PopErrorScopeCallback<T>,
               typename CbChar = void (PopErrorScopeStatus status, ErrorType type, const char* message, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future PopErrorScope(CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = PopErrorScopeCallback2<>,
+              typename Cb = PopErrorScopeCallback<>,
               typename CbChar = std::function<void(PopErrorScopeStatus status, ErrorType type, const char* message)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future PopErrorScope(CallbackMode callbackMode, L callback) const;
-    inline Future PopErrorScope(PopErrorScopeCallbackInfo callbackInfo) const;
     inline void PushErrorScope(ErrorFilter filter) const;
     inline void SetLabel(StringView label) const;
     inline void SetLoggingCallback(LoggingCallback callback, void * userdata) const;
@@ -1772,18 +1728,16 @@ class Instance : public ObjectBase<Instance, WGPUInstance> {
     inline size_t EnumerateWGSLLanguageFeatures(WGSLFeatureName * features) const;
     inline Bool HasWGSLLanguageFeature(WGSLFeatureName feature) const;
     inline void ProcessEvents() const;
-    inline void RequestAdapter(RequestAdapterOptions const * options, RequestAdapterCallback callback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = RequestAdapterCallback2<T>,
+              typename Cb = RequestAdapterCallback<T>,
               typename CbChar = void (RequestAdapterStatus status, Adapter adapter, const char* message, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future RequestAdapter(RequestAdapterOptions const * options, CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = RequestAdapterCallback2<>,
+              typename Cb = RequestAdapterCallback<>,
               typename CbChar = std::function<void(RequestAdapterStatus status, Adapter adapter, const char* message)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future RequestAdapter(RequestAdapterOptions const * options, CallbackMode callbackMode, L callback) const;
-    inline Future RequestAdapter(RequestAdapterOptions const * options, RequestAdapterCallbackInfo callbackInfo) const;
     inline WaitStatus WaitAny(size_t futureCount, FutureWaitInfo * futures, uint64_t timeoutNS) const;
 
     inline WaitStatus WaitAny(Future f, uint64_t timeout) const;
@@ -1832,18 +1786,16 @@ class Queue : public ObjectBase<Queue, WGPUQueue> {
 
     inline void CopyExternalTextureForBrowser(ImageCopyExternalTexture const * source, ImageCopyTexture const * destination, Extent3D const * copySize, CopyTextureForBrowserOptions const * options) const;
     inline void CopyTextureForBrowser(ImageCopyTexture const * source, ImageCopyTexture const * destination, Extent3D const * copySize, CopyTextureForBrowserOptions const * options) const;
-    inline void OnSubmittedWorkDone(QueueWorkDoneCallback callback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = QueueWorkDoneCallback2<T>,
+              typename Cb = QueueWorkDoneCallback<T>,
               typename CbChar = void (QueueWorkDoneStatus status, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future OnSubmittedWorkDone(CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = QueueWorkDoneCallback2<>,
+              typename Cb = QueueWorkDoneCallback<>,
               typename CbChar = std::function<void(QueueWorkDoneStatus status)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future OnSubmittedWorkDone(CallbackMode callbackMode, L callback) const;
-    inline Future OnSubmittedWorkDone(QueueWorkDoneCallbackInfo callbackInfo) const;
     inline void SetLabel(StringView label) const;
     inline void Submit(size_t commandCount, CommandBuffer const * commands) const;
     inline void WriteBuffer(Buffer const& buffer, uint64_t bufferOffset, void const * data, size_t size) const;
@@ -1967,18 +1919,16 @@ class ShaderModule : public ObjectBase<ShaderModule, WGPUShaderModule> {
     using ObjectBase::ObjectBase;
     using ObjectBase::operator=;
 
-    inline void GetCompilationInfo(CompilationInfoCallback callback, void * userdata) const;
     template <typename F, typename T,
-              typename Cb = CompilationInfoCallback2<T>,
+              typename Cb = CompilationInfoCallback<T>,
               typename CbChar = void (CompilationInfoRequestStatus status, CompilationInfo const * compilationInfo, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     Future GetCompilationInfo(CallbackMode callbackMode, F callback, T userdata) const;
     template <typename L,
-              typename Cb = CompilationInfoCallback2<>,
+              typename Cb = CompilationInfoCallback<>,
               typename CbChar = std::function<void(CompilationInfoRequestStatus status, CompilationInfo const * compilationInfo)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     Future GetCompilationInfo(CallbackMode callbackMode, L callback) const;
-    inline Future GetCompilationInfo(CompilationInfoCallbackInfo callbackInfo) const;
     inline void SetLabel(StringView label) const;
 
 
@@ -2110,8 +2060,8 @@ static_assert(offsetof(ChainedStruct, sType) == offsetof(WGPUChainedStruct, sTyp
     "offsetof mismatch for ChainedStruct::sType");
 
 
-struct INTERNAL__HAVE_EMDAWNWEBGPU_HEADER {
-    inline operator const WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER&() const noexcept;
+struct INTERNAL_HAVE_EMDAWNWEBGPU_HEADER {
+    inline operator const WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER&() const noexcept;
 
     Bool unused = false;
 };
@@ -2196,15 +2146,6 @@ struct BufferHostMappedPointer : ChainedStruct {
     void * userdata;
 };
 
-struct BufferMapCallbackInfo {
-    inline operator const WGPUBufferMapCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode;
-    BufferMapCallback callback;
-    void * userdata;
-};
-
 struct Color {
     inline operator const WGPUColor&() const noexcept;
 
@@ -2224,15 +2165,6 @@ struct ColorTargetStateExpandResolveTextureDawn : ChainedStruct {
 
     static constexpr size_t kFirstMemberAlignment = detail::ConstexprMax(alignof(ChainedStruct), alignof(Bool ));
     alignas(kFirstMemberAlignment) Bool enabled = false;
-};
-
-struct CompilationInfoCallbackInfo {
-    inline operator const WGPUCompilationInfoCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode;
-    CompilationInfoCallback callback;
-    void * userdata = nullptr;
 };
 
 struct ComputePassTimestampWrites {
@@ -2255,24 +2187,6 @@ struct CopyTextureForBrowserOptions {
     float const * dstTransferFunctionParameters = nullptr;
     AlphaMode dstAlphaMode = AlphaMode::Unpremultiplied;
     Bool internalUsage = false;
-};
-
-struct CreateComputePipelineAsyncCallbackInfo {
-    inline operator const WGPUCreateComputePipelineAsyncCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode;
-    CreateComputePipelineAsyncCallback callback;
-    void * userdata;
-};
-
-struct CreateRenderPipelineAsyncCallbackInfo {
-    inline operator const WGPUCreateRenderPipelineAsyncCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode;
-    CreateRenderPipelineAsyncCallback callback;
-    void * userdata;
 };
 
 // Can be chained in InstanceDescriptor
@@ -2312,6 +2226,13 @@ struct DawnBufferDescriptorErrorInfoFromWireClient : ChainedStruct {
     alignas(kFirstMemberAlignment) Bool outOfMemory = false;
 };
 
+struct DawnDrmFormatProperties {
+    inline operator const WGPUDawnDrmFormatProperties&() const noexcept;
+
+    uint64_t modifier;
+    uint32_t modifierPlaneCount;
+};
+
 // Can be chained in CommandEncoderDescriptor
 struct DawnEncoderInternalUsageDescriptor : ChainedStruct {
     inline DawnEncoderInternalUsageDescriptor();
@@ -2347,6 +2268,12 @@ struct DawnExperimentalSubgroupLimits : ChainedStructOut {
     static constexpr size_t kFirstMemberAlignment = detail::ConstexprMax(alignof(ChainedStruct), alignof(uint32_t ));
     alignas(kFirstMemberAlignment) uint32_t minSubgroupSize = WGPU_LIMIT_U32_UNDEFINED;
     uint32_t maxSubgroupSize = WGPU_LIMIT_U32_UNDEFINED;
+};
+
+struct DawnFormatCapabilities {
+    inline operator const WGPUDawnFormatCapabilities&() const noexcept;
+
+    ChainedStructOut  * nextInChain = nullptr;
 };
 
 // Can be chained in RenderPassColorAttachment
@@ -2428,22 +2355,6 @@ struct DawnWireWGSLControl : ChainedStruct {
     Bool enableTesting = false;
 };
 
-struct DeviceLostCallbackInfo {
-    inline operator const WGPUDeviceLostCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode = CallbackMode::WaitAnyOnly;
-    DeviceLostCallbackNew callback = nullptr;
-    void * userdata = nullptr;
-};
-
-struct DrmFormatProperties {
-    inline operator const WGPUDrmFormatProperties&() const noexcept;
-
-    uint64_t modifier;
-    uint32_t modifierPlaneCount;
-};
-
 struct Extent2D {
     inline operator const WGPUExtent2D&() const noexcept;
 
@@ -2479,12 +2390,6 @@ struct ExternalTextureBindingLayout : ChainedStruct {
     inline ExternalTextureBindingLayout(Init&& init);
     inline operator const WGPUExternalTextureBindingLayout&() const noexcept;
 
-};
-
-struct FormatCapabilities {
-    inline operator const WGPUFormatCapabilities&() const noexcept;
-
-    ChainedStructOut  * nextInChain = nullptr;
 };
 
 struct Future {
@@ -2580,16 +2485,6 @@ struct PipelineLayoutStorageAttachment {
     TextureFormat format;
 };
 
-struct PopErrorScopeCallbackInfo {
-    inline operator const WGPUPopErrorScopeCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode = CallbackMode::WaitAnyOnly;
-    PopErrorScopeCallback callback;
-    ErrorCallback oldCallback;
-    void * userdata = nullptr;
-};
-
 struct PrimitiveState {
     inline operator const WGPUPrimitiveState&() const noexcept;
 
@@ -2599,15 +2494,6 @@ struct PrimitiveState {
     FrontFace frontFace = FrontFace::CCW;
     CullMode cullMode = CullMode::None;
     Bool unclippedDepth = false;
-};
-
-struct QueueWorkDoneCallbackInfo {
-    inline operator const WGPUQueueWorkDoneCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode;
-    QueueWorkDoneCallback callback;
-    void * userdata;
 };
 
 struct RenderPassDepthStencilAttachment {
@@ -2659,15 +2545,6 @@ struct RenderPassTimestampWrites {
     uint32_t endOfPassWriteIndex = WGPU_QUERY_SET_INDEX_UNDEFINED;
 };
 
-struct RequestAdapterCallbackInfo {
-    inline operator const WGPURequestAdapterCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode;
-    RequestAdapterCallback callback;
-    void * userdata;
-};
-
 struct RequestAdapterOptions {
     inline operator const WGPURequestAdapterOptions&() const noexcept;
 
@@ -2677,15 +2554,6 @@ struct RequestAdapterOptions {
     PowerPreference powerPreference = PowerPreference::Undefined;
     BackendType backendType = BackendType::Undefined;
     Bool forceFallbackAdapter = false;
-};
-
-struct RequestDeviceCallbackInfo {
-    inline operator const WGPURequestDeviceCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    CallbackMode mode;
-    RequestDeviceCallback callback;
-    void * userdata;
 };
 
 struct SamplerBindingLayout {
@@ -3277,14 +3145,6 @@ struct TextureDataLayout {
     uint32_t rowsPerImage = WGPU_COPY_STRIDE_UNDEFINED;
 };
 
-struct UncapturedErrorCallbackInfo {
-    inline operator const WGPUUncapturedErrorCallbackInfo&() const noexcept;
-
-    ChainedStruct const * nextInChain = nullptr;
-    ErrorCallback callback = nullptr;
-    void * userdata = nullptr;
-};
-
 struct VertexAttribute {
     inline operator const WGPUVertexAttribute&() const noexcept;
 
@@ -3469,6 +3329,28 @@ struct DawnCacheDeviceDescriptor : ChainedStruct {
     void * functionUserdata = nullptr;
 };
 
+// Can be chained in DawnFormatCapabilities
+struct DawnDrmFormatCapabilities : ChainedStructOut {
+    inline DawnDrmFormatCapabilities();
+
+    struct Init;
+    inline DawnDrmFormatCapabilities(Init&& init);
+    inline ~DawnDrmFormatCapabilities();
+    DawnDrmFormatCapabilities(const DawnDrmFormatCapabilities&) = delete;
+    DawnDrmFormatCapabilities& operator=(const DawnDrmFormatCapabilities&) = delete;
+    inline DawnDrmFormatCapabilities(DawnDrmFormatCapabilities&&);
+    inline DawnDrmFormatCapabilities& operator=(DawnDrmFormatCapabilities&&);
+    inline operator const WGPUDawnDrmFormatCapabilities&() const noexcept;
+
+    static constexpr size_t kFirstMemberAlignment = detail::ConstexprMax(alignof(ChainedStruct), alignof(size_t ));
+    alignas(kFirstMemberAlignment) size_t const propertiesCount = {};
+    DawnDrmFormatProperties const * const properties = {};
+
+  private:
+    inline void FreeMembers();
+    static inline void Reset(DawnDrmFormatCapabilities& value);
+};
+
 struct DepthStencilState {
     inline operator const WGPUDepthStencilState&() const noexcept;
 
@@ -3483,28 +3365,6 @@ struct DepthStencilState {
     int32_t depthBias = 0;
     float depthBiasSlopeScale = 0.0f;
     float depthBiasClamp = 0.0f;
-};
-
-// Can be chained in FormatCapabilities
-struct DrmFormatCapabilities : ChainedStructOut {
-    inline DrmFormatCapabilities();
-
-    struct Init;
-    inline DrmFormatCapabilities(Init&& init);
-    inline ~DrmFormatCapabilities();
-    DrmFormatCapabilities(const DrmFormatCapabilities&) = delete;
-    DrmFormatCapabilities& operator=(const DrmFormatCapabilities&) = delete;
-    inline DrmFormatCapabilities(DrmFormatCapabilities&&);
-    inline DrmFormatCapabilities& operator=(DrmFormatCapabilities&&);
-    inline operator const WGPUDrmFormatCapabilities&() const noexcept;
-
-    static constexpr size_t kFirstMemberAlignment = detail::ConstexprMax(alignof(ChainedStruct), alignof(size_t ));
-    alignas(kFirstMemberAlignment) size_t const propertiesCount = {};
-    DrmFormatProperties const * const properties = {};
-
-  private:
-    inline void FreeMembers();
-    static inline void Reset(DrmFormatCapabilities& value);
 };
 
 struct ExternalTextureDescriptor {
@@ -3931,8 +3791,8 @@ struct DeviceDescriptor {
     FeatureName const * requiredFeatures = nullptr;
     RequiredLimits const * requiredLimits = nullptr;
     QueueDescriptor defaultQueue = {};
-    WGPUDeviceLostCallbackInfo2 deviceLostCallbackInfo2 = WGPU_DEVICE_LOST_CALLBACK_INFO_2_INIT;
-    WGPUUncapturedErrorCallbackInfo2 uncapturedErrorCallbackInfo2 = WGPU_UNCAPTURED_ERROR_CALLBACK_INFO_2_INIT;
+    WGPUDeviceLostCallbackInfo deviceLostCallbackInfo = WGPU_DEVICE_LOST_CALLBACK_INFO_INIT;
+    WGPUUncapturedErrorCallbackInfo uncapturedErrorCallbackInfo = WGPU_UNCAPTURED_ERROR_CALLBACK_INFO_INIT;
 };
 }  // namespace detail
 struct DeviceDescriptor : protected detail::DeviceDescriptor {
@@ -3950,12 +3810,12 @@ struct DeviceDescriptor : protected detail::DeviceDescriptor {
     inline DeviceDescriptor(Init&& init);
 
     template <typename F, typename T,
-              typename Cb = DeviceLostCallback2<T>,
+              typename Cb = DeviceLostCallback<T>,
               typename CbChar = void (const Device& device, DeviceLostReason reason, const char* message, T userdata),
               typename = std::enable_if_t<std::is_convertible_v<F, Cb*> || std::is_convertible_v<F, CbChar*>>>
     void SetDeviceLostCallback(CallbackMode callbackMode, F callback, T userdata);
     template <typename L,
-              typename Cb = DeviceLostCallback2<>,
+              typename Cb = DeviceLostCallback<>,
               typename CbChar = std::function<void(const Device& device, DeviceLostReason reason, const char* message)>,
               typename = std::enable_if_t<std::is_convertible_v<L, Cb> || std::is_convertible_v<L, CbChar>>>
     void SetDeviceLostCallback(CallbackMode callbackMode, L callback);
@@ -3978,16 +3838,16 @@ struct DeviceDescriptor : protected detail::DeviceDescriptor {
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
 #endif
 
-// INTERNAL__HAVE_EMDAWNWEBGPU_HEADER implementation
+// INTERNAL_HAVE_EMDAWNWEBGPU_HEADER implementation
 
-INTERNAL__HAVE_EMDAWNWEBGPU_HEADER::operator const WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER&() const noexcept {
-    return *reinterpret_cast<const WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER*>(this);
+INTERNAL_HAVE_EMDAWNWEBGPU_HEADER::operator const WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER&() const noexcept {
+    return *reinterpret_cast<const WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER*>(this);
 }
 
-static_assert(sizeof(INTERNAL__HAVE_EMDAWNWEBGPU_HEADER) == sizeof(WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER), "sizeof mismatch for INTERNAL__HAVE_EMDAWNWEBGPU_HEADER");
-static_assert(alignof(INTERNAL__HAVE_EMDAWNWEBGPU_HEADER) == alignof(WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER), "alignof mismatch for INTERNAL__HAVE_EMDAWNWEBGPU_HEADER");
-static_assert(offsetof(INTERNAL__HAVE_EMDAWNWEBGPU_HEADER, unused) == offsetof(WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER, unused),
-        "offsetof mismatch for INTERNAL__HAVE_EMDAWNWEBGPU_HEADER::unused");
+static_assert(sizeof(INTERNAL_HAVE_EMDAWNWEBGPU_HEADER) == sizeof(WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER), "sizeof mismatch for INTERNAL_HAVE_EMDAWNWEBGPU_HEADER");
+static_assert(alignof(INTERNAL_HAVE_EMDAWNWEBGPU_HEADER) == alignof(WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER), "alignof mismatch for INTERNAL_HAVE_EMDAWNWEBGPU_HEADER");
+static_assert(offsetof(INTERNAL_HAVE_EMDAWNWEBGPU_HEADER, unused) == offsetof(WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER, unused),
+        "offsetof mismatch for INTERNAL_HAVE_EMDAWNWEBGPU_HEADER::unused");
 
 // AdapterPropertiesD3D implementation
 AdapterPropertiesD3D::AdapterPropertiesD3D()
@@ -4136,23 +3996,6 @@ static_assert(offsetof(BufferHostMappedPointer, disposeCallback) == offsetof(WGP
 static_assert(offsetof(BufferHostMappedPointer, userdata) == offsetof(WGPUBufferHostMappedPointer, userdata),
         "offsetof mismatch for BufferHostMappedPointer::userdata");
 
-// BufferMapCallbackInfo implementation
-
-BufferMapCallbackInfo::operator const WGPUBufferMapCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUBufferMapCallbackInfo*>(this);
-}
-
-static_assert(sizeof(BufferMapCallbackInfo) == sizeof(WGPUBufferMapCallbackInfo), "sizeof mismatch for BufferMapCallbackInfo");
-static_assert(alignof(BufferMapCallbackInfo) == alignof(WGPUBufferMapCallbackInfo), "alignof mismatch for BufferMapCallbackInfo");
-static_assert(offsetof(BufferMapCallbackInfo, nextInChain) == offsetof(WGPUBufferMapCallbackInfo, nextInChain),
-        "offsetof mismatch for BufferMapCallbackInfo::nextInChain");
-static_assert(offsetof(BufferMapCallbackInfo, mode) == offsetof(WGPUBufferMapCallbackInfo, mode),
-        "offsetof mismatch for BufferMapCallbackInfo::mode");
-static_assert(offsetof(BufferMapCallbackInfo, callback) == offsetof(WGPUBufferMapCallbackInfo, callback),
-        "offsetof mismatch for BufferMapCallbackInfo::callback");
-static_assert(offsetof(BufferMapCallbackInfo, userdata) == offsetof(WGPUBufferMapCallbackInfo, userdata),
-        "offsetof mismatch for BufferMapCallbackInfo::userdata");
-
 // Color implementation
 
 Color::operator const WGPUColor&() const noexcept {
@@ -4189,23 +4032,6 @@ static_assert(sizeof(ColorTargetStateExpandResolveTextureDawn) == sizeof(WGPUCol
 static_assert(alignof(ColorTargetStateExpandResolveTextureDawn) == alignof(WGPUColorTargetStateExpandResolveTextureDawn), "alignof mismatch for ColorTargetStateExpandResolveTextureDawn");
 static_assert(offsetof(ColorTargetStateExpandResolveTextureDawn, enabled) == offsetof(WGPUColorTargetStateExpandResolveTextureDawn, enabled),
         "offsetof mismatch for ColorTargetStateExpandResolveTextureDawn::enabled");
-
-// CompilationInfoCallbackInfo implementation
-
-CompilationInfoCallbackInfo::operator const WGPUCompilationInfoCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUCompilationInfoCallbackInfo*>(this);
-}
-
-static_assert(sizeof(CompilationInfoCallbackInfo) == sizeof(WGPUCompilationInfoCallbackInfo), "sizeof mismatch for CompilationInfoCallbackInfo");
-static_assert(alignof(CompilationInfoCallbackInfo) == alignof(WGPUCompilationInfoCallbackInfo), "alignof mismatch for CompilationInfoCallbackInfo");
-static_assert(offsetof(CompilationInfoCallbackInfo, nextInChain) == offsetof(WGPUCompilationInfoCallbackInfo, nextInChain),
-        "offsetof mismatch for CompilationInfoCallbackInfo::nextInChain");
-static_assert(offsetof(CompilationInfoCallbackInfo, mode) == offsetof(WGPUCompilationInfoCallbackInfo, mode),
-        "offsetof mismatch for CompilationInfoCallbackInfo::mode");
-static_assert(offsetof(CompilationInfoCallbackInfo, callback) == offsetof(WGPUCompilationInfoCallbackInfo, callback),
-        "offsetof mismatch for CompilationInfoCallbackInfo::callback");
-static_assert(offsetof(CompilationInfoCallbackInfo, userdata) == offsetof(WGPUCompilationInfoCallbackInfo, userdata),
-        "offsetof mismatch for CompilationInfoCallbackInfo::userdata");
 
 // ComputePassTimestampWrites implementation
 
@@ -4248,40 +4074,6 @@ static_assert(offsetof(CopyTextureForBrowserOptions, dstAlphaMode) == offsetof(W
         "offsetof mismatch for CopyTextureForBrowserOptions::dstAlphaMode");
 static_assert(offsetof(CopyTextureForBrowserOptions, internalUsage) == offsetof(WGPUCopyTextureForBrowserOptions, internalUsage),
         "offsetof mismatch for CopyTextureForBrowserOptions::internalUsage");
-
-// CreateComputePipelineAsyncCallbackInfo implementation
-
-CreateComputePipelineAsyncCallbackInfo::operator const WGPUCreateComputePipelineAsyncCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUCreateComputePipelineAsyncCallbackInfo*>(this);
-}
-
-static_assert(sizeof(CreateComputePipelineAsyncCallbackInfo) == sizeof(WGPUCreateComputePipelineAsyncCallbackInfo), "sizeof mismatch for CreateComputePipelineAsyncCallbackInfo");
-static_assert(alignof(CreateComputePipelineAsyncCallbackInfo) == alignof(WGPUCreateComputePipelineAsyncCallbackInfo), "alignof mismatch for CreateComputePipelineAsyncCallbackInfo");
-static_assert(offsetof(CreateComputePipelineAsyncCallbackInfo, nextInChain) == offsetof(WGPUCreateComputePipelineAsyncCallbackInfo, nextInChain),
-        "offsetof mismatch for CreateComputePipelineAsyncCallbackInfo::nextInChain");
-static_assert(offsetof(CreateComputePipelineAsyncCallbackInfo, mode) == offsetof(WGPUCreateComputePipelineAsyncCallbackInfo, mode),
-        "offsetof mismatch for CreateComputePipelineAsyncCallbackInfo::mode");
-static_assert(offsetof(CreateComputePipelineAsyncCallbackInfo, callback) == offsetof(WGPUCreateComputePipelineAsyncCallbackInfo, callback),
-        "offsetof mismatch for CreateComputePipelineAsyncCallbackInfo::callback");
-static_assert(offsetof(CreateComputePipelineAsyncCallbackInfo, userdata) == offsetof(WGPUCreateComputePipelineAsyncCallbackInfo, userdata),
-        "offsetof mismatch for CreateComputePipelineAsyncCallbackInfo::userdata");
-
-// CreateRenderPipelineAsyncCallbackInfo implementation
-
-CreateRenderPipelineAsyncCallbackInfo::operator const WGPUCreateRenderPipelineAsyncCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUCreateRenderPipelineAsyncCallbackInfo*>(this);
-}
-
-static_assert(sizeof(CreateRenderPipelineAsyncCallbackInfo) == sizeof(WGPUCreateRenderPipelineAsyncCallbackInfo), "sizeof mismatch for CreateRenderPipelineAsyncCallbackInfo");
-static_assert(alignof(CreateRenderPipelineAsyncCallbackInfo) == alignof(WGPUCreateRenderPipelineAsyncCallbackInfo), "alignof mismatch for CreateRenderPipelineAsyncCallbackInfo");
-static_assert(offsetof(CreateRenderPipelineAsyncCallbackInfo, nextInChain) == offsetof(WGPUCreateRenderPipelineAsyncCallbackInfo, nextInChain),
-        "offsetof mismatch for CreateRenderPipelineAsyncCallbackInfo::nextInChain");
-static_assert(offsetof(CreateRenderPipelineAsyncCallbackInfo, mode) == offsetof(WGPUCreateRenderPipelineAsyncCallbackInfo, mode),
-        "offsetof mismatch for CreateRenderPipelineAsyncCallbackInfo::mode");
-static_assert(offsetof(CreateRenderPipelineAsyncCallbackInfo, callback) == offsetof(WGPUCreateRenderPipelineAsyncCallbackInfo, callback),
-        "offsetof mismatch for CreateRenderPipelineAsyncCallbackInfo::callback");
-static_assert(offsetof(CreateRenderPipelineAsyncCallbackInfo, userdata) == offsetof(WGPUCreateRenderPipelineAsyncCallbackInfo, userdata),
-        "offsetof mismatch for CreateRenderPipelineAsyncCallbackInfo::userdata");
 
 // DawnWGSLBlocklist implementation
 DawnWGSLBlocklist::DawnWGSLBlocklist()
@@ -4347,6 +4139,19 @@ static_assert(alignof(DawnBufferDescriptorErrorInfoFromWireClient) == alignof(WG
 static_assert(offsetof(DawnBufferDescriptorErrorInfoFromWireClient, outOfMemory) == offsetof(WGPUDawnBufferDescriptorErrorInfoFromWireClient, outOfMemory),
         "offsetof mismatch for DawnBufferDescriptorErrorInfoFromWireClient::outOfMemory");
 
+// DawnDrmFormatProperties implementation
+
+DawnDrmFormatProperties::operator const WGPUDawnDrmFormatProperties&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnDrmFormatProperties*>(this);
+}
+
+static_assert(sizeof(DawnDrmFormatProperties) == sizeof(WGPUDawnDrmFormatProperties), "sizeof mismatch for DawnDrmFormatProperties");
+static_assert(alignof(DawnDrmFormatProperties) == alignof(WGPUDawnDrmFormatProperties), "alignof mismatch for DawnDrmFormatProperties");
+static_assert(offsetof(DawnDrmFormatProperties, modifier) == offsetof(WGPUDawnDrmFormatProperties, modifier),
+        "offsetof mismatch for DawnDrmFormatProperties::modifier");
+static_assert(offsetof(DawnDrmFormatProperties, modifierPlaneCount) == offsetof(WGPUDawnDrmFormatProperties, modifierPlaneCount),
+        "offsetof mismatch for DawnDrmFormatProperties::modifierPlaneCount");
+
 // DawnEncoderInternalUsageDescriptor implementation
 DawnEncoderInternalUsageDescriptor::DawnEncoderInternalUsageDescriptor()
   : ChainedStruct { nullptr, SType::DawnEncoderInternalUsageDescriptor } {}
@@ -4410,6 +4215,17 @@ static_assert(offsetof(DawnExperimentalSubgroupLimits, minSubgroupSize) == offse
         "offsetof mismatch for DawnExperimentalSubgroupLimits::minSubgroupSize");
 static_assert(offsetof(DawnExperimentalSubgroupLimits, maxSubgroupSize) == offsetof(WGPUDawnExperimentalSubgroupLimits, maxSubgroupSize),
         "offsetof mismatch for DawnExperimentalSubgroupLimits::maxSubgroupSize");
+
+// DawnFormatCapabilities implementation
+
+DawnFormatCapabilities::operator const WGPUDawnFormatCapabilities&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnFormatCapabilities*>(this);
+}
+
+static_assert(sizeof(DawnFormatCapabilities) == sizeof(WGPUDawnFormatCapabilities), "sizeof mismatch for DawnFormatCapabilities");
+static_assert(alignof(DawnFormatCapabilities) == alignof(WGPUDawnFormatCapabilities), "alignof mismatch for DawnFormatCapabilities");
+static_assert(offsetof(DawnFormatCapabilities, nextInChain) == offsetof(WGPUDawnFormatCapabilities, nextInChain),
+        "offsetof mismatch for DawnFormatCapabilities::nextInChain");
 
 // DawnRenderPassColorAttachmentRenderToSingleSampled implementation
 DawnRenderPassColorAttachmentRenderToSingleSampled::DawnRenderPassColorAttachmentRenderToSingleSampled()
@@ -4551,36 +4367,6 @@ static_assert(offsetof(DawnWireWGSLControl, enableUnsafe) == offsetof(WGPUDawnWi
 static_assert(offsetof(DawnWireWGSLControl, enableTesting) == offsetof(WGPUDawnWireWGSLControl, enableTesting),
         "offsetof mismatch for DawnWireWGSLControl::enableTesting");
 
-// DeviceLostCallbackInfo implementation
-
-DeviceLostCallbackInfo::operator const WGPUDeviceLostCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUDeviceLostCallbackInfo*>(this);
-}
-
-static_assert(sizeof(DeviceLostCallbackInfo) == sizeof(WGPUDeviceLostCallbackInfo), "sizeof mismatch for DeviceLostCallbackInfo");
-static_assert(alignof(DeviceLostCallbackInfo) == alignof(WGPUDeviceLostCallbackInfo), "alignof mismatch for DeviceLostCallbackInfo");
-static_assert(offsetof(DeviceLostCallbackInfo, nextInChain) == offsetof(WGPUDeviceLostCallbackInfo, nextInChain),
-        "offsetof mismatch for DeviceLostCallbackInfo::nextInChain");
-static_assert(offsetof(DeviceLostCallbackInfo, mode) == offsetof(WGPUDeviceLostCallbackInfo, mode),
-        "offsetof mismatch for DeviceLostCallbackInfo::mode");
-static_assert(offsetof(DeviceLostCallbackInfo, callback) == offsetof(WGPUDeviceLostCallbackInfo, callback),
-        "offsetof mismatch for DeviceLostCallbackInfo::callback");
-static_assert(offsetof(DeviceLostCallbackInfo, userdata) == offsetof(WGPUDeviceLostCallbackInfo, userdata),
-        "offsetof mismatch for DeviceLostCallbackInfo::userdata");
-
-// DrmFormatProperties implementation
-
-DrmFormatProperties::operator const WGPUDrmFormatProperties&() const noexcept {
-    return *reinterpret_cast<const WGPUDrmFormatProperties*>(this);
-}
-
-static_assert(sizeof(DrmFormatProperties) == sizeof(WGPUDrmFormatProperties), "sizeof mismatch for DrmFormatProperties");
-static_assert(alignof(DrmFormatProperties) == alignof(WGPUDrmFormatProperties), "alignof mismatch for DrmFormatProperties");
-static_assert(offsetof(DrmFormatProperties, modifier) == offsetof(WGPUDrmFormatProperties, modifier),
-        "offsetof mismatch for DrmFormatProperties::modifier");
-static_assert(offsetof(DrmFormatProperties, modifierPlaneCount) == offsetof(WGPUDrmFormatProperties, modifierPlaneCount),
-        "offsetof mismatch for DrmFormatProperties::modifierPlaneCount");
-
 // Extent2D implementation
 
 Extent2D::operator const WGPUExtent2D&() const noexcept {
@@ -4644,17 +4430,6 @@ ExternalTextureBindingLayout::operator const WGPUExternalTextureBindingLayout&()
 
 static_assert(sizeof(ExternalTextureBindingLayout) == sizeof(WGPUExternalTextureBindingLayout), "sizeof mismatch for ExternalTextureBindingLayout");
 static_assert(alignof(ExternalTextureBindingLayout) == alignof(WGPUExternalTextureBindingLayout), "alignof mismatch for ExternalTextureBindingLayout");
-
-// FormatCapabilities implementation
-
-FormatCapabilities::operator const WGPUFormatCapabilities&() const noexcept {
-    return *reinterpret_cast<const WGPUFormatCapabilities*>(this);
-}
-
-static_assert(sizeof(FormatCapabilities) == sizeof(WGPUFormatCapabilities), "sizeof mismatch for FormatCapabilities");
-static_assert(alignof(FormatCapabilities) == alignof(WGPUFormatCapabilities), "alignof mismatch for FormatCapabilities");
-static_assert(offsetof(FormatCapabilities, nextInChain) == offsetof(WGPUFormatCapabilities, nextInChain),
-        "offsetof mismatch for FormatCapabilities::nextInChain");
 
 // Future implementation
 
@@ -4834,25 +4609,6 @@ static_assert(offsetof(PipelineLayoutStorageAttachment, offset) == offsetof(WGPU
 static_assert(offsetof(PipelineLayoutStorageAttachment, format) == offsetof(WGPUPipelineLayoutStorageAttachment, format),
         "offsetof mismatch for PipelineLayoutStorageAttachment::format");
 
-// PopErrorScopeCallbackInfo implementation
-
-PopErrorScopeCallbackInfo::operator const WGPUPopErrorScopeCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUPopErrorScopeCallbackInfo*>(this);
-}
-
-static_assert(sizeof(PopErrorScopeCallbackInfo) == sizeof(WGPUPopErrorScopeCallbackInfo), "sizeof mismatch for PopErrorScopeCallbackInfo");
-static_assert(alignof(PopErrorScopeCallbackInfo) == alignof(WGPUPopErrorScopeCallbackInfo), "alignof mismatch for PopErrorScopeCallbackInfo");
-static_assert(offsetof(PopErrorScopeCallbackInfo, nextInChain) == offsetof(WGPUPopErrorScopeCallbackInfo, nextInChain),
-        "offsetof mismatch for PopErrorScopeCallbackInfo::nextInChain");
-static_assert(offsetof(PopErrorScopeCallbackInfo, mode) == offsetof(WGPUPopErrorScopeCallbackInfo, mode),
-        "offsetof mismatch for PopErrorScopeCallbackInfo::mode");
-static_assert(offsetof(PopErrorScopeCallbackInfo, callback) == offsetof(WGPUPopErrorScopeCallbackInfo, callback),
-        "offsetof mismatch for PopErrorScopeCallbackInfo::callback");
-static_assert(offsetof(PopErrorScopeCallbackInfo, oldCallback) == offsetof(WGPUPopErrorScopeCallbackInfo, oldCallback),
-        "offsetof mismatch for PopErrorScopeCallbackInfo::oldCallback");
-static_assert(offsetof(PopErrorScopeCallbackInfo, userdata) == offsetof(WGPUPopErrorScopeCallbackInfo, userdata),
-        "offsetof mismatch for PopErrorScopeCallbackInfo::userdata");
-
 // PrimitiveState implementation
 
 PrimitiveState::operator const WGPUPrimitiveState&() const noexcept {
@@ -4873,23 +4629,6 @@ static_assert(offsetof(PrimitiveState, cullMode) == offsetof(WGPUPrimitiveState,
         "offsetof mismatch for PrimitiveState::cullMode");
 static_assert(offsetof(PrimitiveState, unclippedDepth) == offsetof(WGPUPrimitiveState, unclippedDepth),
         "offsetof mismatch for PrimitiveState::unclippedDepth");
-
-// QueueWorkDoneCallbackInfo implementation
-
-QueueWorkDoneCallbackInfo::operator const WGPUQueueWorkDoneCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUQueueWorkDoneCallbackInfo*>(this);
-}
-
-static_assert(sizeof(QueueWorkDoneCallbackInfo) == sizeof(WGPUQueueWorkDoneCallbackInfo), "sizeof mismatch for QueueWorkDoneCallbackInfo");
-static_assert(alignof(QueueWorkDoneCallbackInfo) == alignof(WGPUQueueWorkDoneCallbackInfo), "alignof mismatch for QueueWorkDoneCallbackInfo");
-static_assert(offsetof(QueueWorkDoneCallbackInfo, nextInChain) == offsetof(WGPUQueueWorkDoneCallbackInfo, nextInChain),
-        "offsetof mismatch for QueueWorkDoneCallbackInfo::nextInChain");
-static_assert(offsetof(QueueWorkDoneCallbackInfo, mode) == offsetof(WGPUQueueWorkDoneCallbackInfo, mode),
-        "offsetof mismatch for QueueWorkDoneCallbackInfo::mode");
-static_assert(offsetof(QueueWorkDoneCallbackInfo, callback) == offsetof(WGPUQueueWorkDoneCallbackInfo, callback),
-        "offsetof mismatch for QueueWorkDoneCallbackInfo::callback");
-static_assert(offsetof(QueueWorkDoneCallbackInfo, userdata) == offsetof(WGPUQueueWorkDoneCallbackInfo, userdata),
-        "offsetof mismatch for QueueWorkDoneCallbackInfo::userdata");
 
 // RenderPassDepthStencilAttachment implementation
 
@@ -4985,23 +4724,6 @@ static_assert(offsetof(RenderPassTimestampWrites, beginningOfPassWriteIndex) == 
 static_assert(offsetof(RenderPassTimestampWrites, endOfPassWriteIndex) == offsetof(WGPURenderPassTimestampWrites, endOfPassWriteIndex),
         "offsetof mismatch for RenderPassTimestampWrites::endOfPassWriteIndex");
 
-// RequestAdapterCallbackInfo implementation
-
-RequestAdapterCallbackInfo::operator const WGPURequestAdapterCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPURequestAdapterCallbackInfo*>(this);
-}
-
-static_assert(sizeof(RequestAdapterCallbackInfo) == sizeof(WGPURequestAdapterCallbackInfo), "sizeof mismatch for RequestAdapterCallbackInfo");
-static_assert(alignof(RequestAdapterCallbackInfo) == alignof(WGPURequestAdapterCallbackInfo), "alignof mismatch for RequestAdapterCallbackInfo");
-static_assert(offsetof(RequestAdapterCallbackInfo, nextInChain) == offsetof(WGPURequestAdapterCallbackInfo, nextInChain),
-        "offsetof mismatch for RequestAdapterCallbackInfo::nextInChain");
-static_assert(offsetof(RequestAdapterCallbackInfo, mode) == offsetof(WGPURequestAdapterCallbackInfo, mode),
-        "offsetof mismatch for RequestAdapterCallbackInfo::mode");
-static_assert(offsetof(RequestAdapterCallbackInfo, callback) == offsetof(WGPURequestAdapterCallbackInfo, callback),
-        "offsetof mismatch for RequestAdapterCallbackInfo::callback");
-static_assert(offsetof(RequestAdapterCallbackInfo, userdata) == offsetof(WGPURequestAdapterCallbackInfo, userdata),
-        "offsetof mismatch for RequestAdapterCallbackInfo::userdata");
-
 // RequestAdapterOptions implementation
 
 RequestAdapterOptions::operator const WGPURequestAdapterOptions&() const noexcept {
@@ -5022,23 +4744,6 @@ static_assert(offsetof(RequestAdapterOptions, backendType) == offsetof(WGPUReque
         "offsetof mismatch for RequestAdapterOptions::backendType");
 static_assert(offsetof(RequestAdapterOptions, forceFallbackAdapter) == offsetof(WGPURequestAdapterOptions, forceFallbackAdapter),
         "offsetof mismatch for RequestAdapterOptions::forceFallbackAdapter");
-
-// RequestDeviceCallbackInfo implementation
-
-RequestDeviceCallbackInfo::operator const WGPURequestDeviceCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPURequestDeviceCallbackInfo*>(this);
-}
-
-static_assert(sizeof(RequestDeviceCallbackInfo) == sizeof(WGPURequestDeviceCallbackInfo), "sizeof mismatch for RequestDeviceCallbackInfo");
-static_assert(alignof(RequestDeviceCallbackInfo) == alignof(WGPURequestDeviceCallbackInfo), "alignof mismatch for RequestDeviceCallbackInfo");
-static_assert(offsetof(RequestDeviceCallbackInfo, nextInChain) == offsetof(WGPURequestDeviceCallbackInfo, nextInChain),
-        "offsetof mismatch for RequestDeviceCallbackInfo::nextInChain");
-static_assert(offsetof(RequestDeviceCallbackInfo, mode) == offsetof(WGPURequestDeviceCallbackInfo, mode),
-        "offsetof mismatch for RequestDeviceCallbackInfo::mode");
-static_assert(offsetof(RequestDeviceCallbackInfo, callback) == offsetof(WGPURequestDeviceCallbackInfo, callback),
-        "offsetof mismatch for RequestDeviceCallbackInfo::callback");
-static_assert(offsetof(RequestDeviceCallbackInfo, userdata) == offsetof(WGPURequestDeviceCallbackInfo, userdata),
-        "offsetof mismatch for RequestDeviceCallbackInfo::userdata");
 
 // SamplerBindingLayout implementation
 
@@ -6191,21 +5896,6 @@ static_assert(offsetof(TextureDataLayout, bytesPerRow) == offsetof(WGPUTextureDa
 static_assert(offsetof(TextureDataLayout, rowsPerImage) == offsetof(WGPUTextureDataLayout, rowsPerImage),
         "offsetof mismatch for TextureDataLayout::rowsPerImage");
 
-// UncapturedErrorCallbackInfo implementation
-
-UncapturedErrorCallbackInfo::operator const WGPUUncapturedErrorCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUUncapturedErrorCallbackInfo*>(this);
-}
-
-static_assert(sizeof(UncapturedErrorCallbackInfo) == sizeof(WGPUUncapturedErrorCallbackInfo), "sizeof mismatch for UncapturedErrorCallbackInfo");
-static_assert(alignof(UncapturedErrorCallbackInfo) == alignof(WGPUUncapturedErrorCallbackInfo), "alignof mismatch for UncapturedErrorCallbackInfo");
-static_assert(offsetof(UncapturedErrorCallbackInfo, nextInChain) == offsetof(WGPUUncapturedErrorCallbackInfo, nextInChain),
-        "offsetof mismatch for UncapturedErrorCallbackInfo::nextInChain");
-static_assert(offsetof(UncapturedErrorCallbackInfo, callback) == offsetof(WGPUUncapturedErrorCallbackInfo, callback),
-        "offsetof mismatch for UncapturedErrorCallbackInfo::callback");
-static_assert(offsetof(UncapturedErrorCallbackInfo, userdata) == offsetof(WGPUUncapturedErrorCallbackInfo, userdata),
-        "offsetof mismatch for UncapturedErrorCallbackInfo::userdata");
-
 // VertexAttribute implementation
 
 VertexAttribute::operator const WGPUVertexAttribute&() const noexcept {
@@ -6630,6 +6320,64 @@ static_assert(offsetof(DawnCacheDeviceDescriptor, storeDataFunction) == offsetof
 static_assert(offsetof(DawnCacheDeviceDescriptor, functionUserdata) == offsetof(WGPUDawnCacheDeviceDescriptor, functionUserdata),
         "offsetof mismatch for DawnCacheDeviceDescriptor::functionUserdata");
 
+// DawnDrmFormatCapabilities implementation
+DawnDrmFormatCapabilities::DawnDrmFormatCapabilities()
+  : ChainedStructOut { nullptr, SType::DawnDrmFormatCapabilities } {}
+struct DawnDrmFormatCapabilities::Init {
+    ChainedStructOut *  nextInChain;
+    size_t const propertiesCount = {};
+    DawnDrmFormatProperties const * const properties = {};
+};
+DawnDrmFormatCapabilities::DawnDrmFormatCapabilities(DawnDrmFormatCapabilities::Init&& init)
+  : ChainedStructOut { init.nextInChain, SType::DawnDrmFormatCapabilities }, 
+    propertiesCount(std::move(init.propertiesCount)), 
+    properties(std::move(init.properties)){}
+DawnDrmFormatCapabilities::~DawnDrmFormatCapabilities() {
+    FreeMembers();
+}
+
+DawnDrmFormatCapabilities::DawnDrmFormatCapabilities(DawnDrmFormatCapabilities&& rhs)
+    : propertiesCount(rhs.propertiesCount),
+            properties(rhs.properties){
+    Reset(rhs);
+}
+
+DawnDrmFormatCapabilities& DawnDrmFormatCapabilities::operator=(DawnDrmFormatCapabilities&& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    FreeMembers();
+    detail::AsNonConstReference(this->propertiesCount) = std::move(rhs.propertiesCount);
+    detail::AsNonConstReference(this->properties) = std::move(rhs.properties);
+    Reset(rhs);
+    return *this;
+}
+
+void DawnDrmFormatCapabilities::FreeMembers() {
+    bool needsFreeing = false;    if (this->properties != nullptr) { needsFreeing = true; }if (needsFreeing) {
+        wgpuDawnDrmFormatCapabilitiesFreeMembers(
+            *reinterpret_cast<WGPUDawnDrmFormatCapabilities*>(this));
+    }
+}
+
+// static
+void DawnDrmFormatCapabilities::Reset(DawnDrmFormatCapabilities& value) {
+    DawnDrmFormatCapabilities defaultValue{};
+    detail::AsNonConstReference(value.propertiesCount) = defaultValue.propertiesCount;
+    detail::AsNonConstReference(value.properties) = defaultValue.properties;
+}
+
+DawnDrmFormatCapabilities::operator const WGPUDawnDrmFormatCapabilities&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnDrmFormatCapabilities*>(this);
+}
+
+static_assert(sizeof(DawnDrmFormatCapabilities) == sizeof(WGPUDawnDrmFormatCapabilities), "sizeof mismatch for DawnDrmFormatCapabilities");
+static_assert(alignof(DawnDrmFormatCapabilities) == alignof(WGPUDawnDrmFormatCapabilities), "alignof mismatch for DawnDrmFormatCapabilities");
+static_assert(offsetof(DawnDrmFormatCapabilities, propertiesCount) == offsetof(WGPUDawnDrmFormatCapabilities, propertiesCount),
+        "offsetof mismatch for DawnDrmFormatCapabilities::propertiesCount");
+static_assert(offsetof(DawnDrmFormatCapabilities, properties) == offsetof(WGPUDawnDrmFormatCapabilities, properties),
+        "offsetof mismatch for DawnDrmFormatCapabilities::properties");
+
 // DepthStencilState implementation
 
 DepthStencilState::operator const WGPUDepthStencilState&() const noexcept {
@@ -6660,64 +6408,6 @@ static_assert(offsetof(DepthStencilState, depthBiasSlopeScale) == offsetof(WGPUD
         "offsetof mismatch for DepthStencilState::depthBiasSlopeScale");
 static_assert(offsetof(DepthStencilState, depthBiasClamp) == offsetof(WGPUDepthStencilState, depthBiasClamp),
         "offsetof mismatch for DepthStencilState::depthBiasClamp");
-
-// DrmFormatCapabilities implementation
-DrmFormatCapabilities::DrmFormatCapabilities()
-  : ChainedStructOut { nullptr, SType::DrmFormatCapabilities } {}
-struct DrmFormatCapabilities::Init {
-    ChainedStructOut *  nextInChain;
-    size_t const propertiesCount = {};
-    DrmFormatProperties const * const properties = {};
-};
-DrmFormatCapabilities::DrmFormatCapabilities(DrmFormatCapabilities::Init&& init)
-  : ChainedStructOut { init.nextInChain, SType::DrmFormatCapabilities }, 
-    propertiesCount(std::move(init.propertiesCount)), 
-    properties(std::move(init.properties)){}
-DrmFormatCapabilities::~DrmFormatCapabilities() {
-    FreeMembers();
-}
-
-DrmFormatCapabilities::DrmFormatCapabilities(DrmFormatCapabilities&& rhs)
-    : propertiesCount(rhs.propertiesCount),
-            properties(rhs.properties){
-    Reset(rhs);
-}
-
-DrmFormatCapabilities& DrmFormatCapabilities::operator=(DrmFormatCapabilities&& rhs) {
-    if (&rhs == this) {
-        return *this;
-    }
-    FreeMembers();
-    detail::AsNonConstReference(this->propertiesCount) = std::move(rhs.propertiesCount);
-    detail::AsNonConstReference(this->properties) = std::move(rhs.properties);
-    Reset(rhs);
-    return *this;
-}
-
-void DrmFormatCapabilities::FreeMembers() {
-    bool needsFreeing = false;    if (this->properties != nullptr) { needsFreeing = true; }if (needsFreeing) {
-        wgpuDrmFormatCapabilitiesFreeMembers(
-            *reinterpret_cast<WGPUDrmFormatCapabilities*>(this));
-    }
-}
-
-// static
-void DrmFormatCapabilities::Reset(DrmFormatCapabilities& value) {
-    DrmFormatCapabilities defaultValue{};
-    detail::AsNonConstReference(value.propertiesCount) = defaultValue.propertiesCount;
-    detail::AsNonConstReference(value.properties) = defaultValue.properties;
-}
-
-DrmFormatCapabilities::operator const WGPUDrmFormatCapabilities&() const noexcept {
-    return *reinterpret_cast<const WGPUDrmFormatCapabilities*>(this);
-}
-
-static_assert(sizeof(DrmFormatCapabilities) == sizeof(WGPUDrmFormatCapabilities), "sizeof mismatch for DrmFormatCapabilities");
-static_assert(alignof(DrmFormatCapabilities) == alignof(WGPUDrmFormatCapabilities), "alignof mismatch for DrmFormatCapabilities");
-static_assert(offsetof(DrmFormatCapabilities, propertiesCount) == offsetof(WGPUDrmFormatCapabilities, propertiesCount),
-        "offsetof mismatch for DrmFormatCapabilities::propertiesCount");
-static_assert(offsetof(DrmFormatCapabilities, properties) == offsetof(WGPUDrmFormatCapabilities, properties),
-        "offsetof mismatch for DrmFormatCapabilities::properties");
 
 // ExternalTextureDescriptor implementation
 
@@ -7526,10 +7216,10 @@ DeviceDescriptor::DeviceDescriptor() : detail::DeviceDescriptor {} {
             "offsetof mismatch for DeviceDescriptor::requiredLimits");
     static_assert(offsetof(DeviceDescriptor, defaultQueue) == offsetof(WGPUDeviceDescriptor, defaultQueue),
             "offsetof mismatch for DeviceDescriptor::defaultQueue");
-    static_assert(offsetof(DeviceDescriptor, deviceLostCallbackInfo2) == offsetof(WGPUDeviceDescriptor, deviceLostCallbackInfo2),
-            "offsetof mismatch for DeviceDescriptor::deviceLostCallbackInfo2");
-    static_assert(offsetof(DeviceDescriptor, uncapturedErrorCallbackInfo2) == offsetof(WGPUDeviceDescriptor, uncapturedErrorCallbackInfo2),
-            "offsetof mismatch for DeviceDescriptor::uncapturedErrorCallbackInfo2");
+    static_assert(offsetof(DeviceDescriptor, deviceLostCallbackInfo) == offsetof(WGPUDeviceDescriptor, deviceLostCallbackInfo),
+            "offsetof mismatch for DeviceDescriptor::deviceLostCallbackInfo");
+    static_assert(offsetof(DeviceDescriptor, uncapturedErrorCallbackInfo) == offsetof(WGPUDeviceDescriptor, uncapturedErrorCallbackInfo),
+            "offsetof mismatch for DeviceDescriptor::uncapturedErrorCallbackInfo");
 }
 
 struct DeviceDescriptor::Init {
@@ -7554,11 +7244,11 @@ static_assert(alignof(DeviceDescriptor) == alignof(WGPUDeviceDescriptor), "align
 
 template <typename F, typename T, typename Cb, typename CbChar, typename>
 void DeviceDescriptor::SetDeviceLostCallback(CallbackMode callbackMode, F callback, T userdata) {
-    assert(deviceLostCallbackInfo2.callback == nullptr);
+    assert(deviceLostCallbackInfo.callback == nullptr);
 
-    deviceLostCallbackInfo2.mode = static_cast<WGPUCallbackMode>(callbackMode);
+    deviceLostCallbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
-        deviceLostCallbackInfo2.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void* userdata_param) {
+        deviceLostCallbackInfo.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void* userdata_param) {
             auto cb = reinterpret_cast<Cb*>(callback_param);
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
@@ -7566,7 +7256,7 @@ void DeviceDescriptor::SetDeviceLostCallback(CallbackMode callbackMode, F callba
             apiDevice.MoveToCHandle();
         };
     } else {
-        deviceLostCallbackInfo2.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void* userdata_param) {
+        deviceLostCallbackInfo.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void* userdata_param) {
             auto cb = reinterpret_cast<CbChar*>(callback_param);
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
@@ -7574,44 +7264,44 @@ void DeviceDescriptor::SetDeviceLostCallback(CallbackMode callbackMode, F callba
             apiDevice.MoveToCHandle();
         };
     }
-    deviceLostCallbackInfo2.userdata1 = reinterpret_cast<void*>(+callback);
-    deviceLostCallbackInfo2.userdata2 = reinterpret_cast<void*>(userdata);
+    deviceLostCallbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
+    deviceLostCallbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
 }
 
 template <typename L, typename Cb, typename CbChar, typename>
 void DeviceDescriptor::SetDeviceLostCallback(CallbackMode callbackMode, L callback) {
-    assert(deviceLostCallbackInfo2.callback == nullptr);
-    using F = DeviceLostCallback2<void>;
+    assert(deviceLostCallbackInfo.callback == nullptr);
+    using F = DeviceLostCallback<void>;
 
-    deviceLostCallbackInfo2.mode = static_cast<WGPUCallbackMode>(callbackMode);
+    deviceLostCallbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
-        deviceLostCallbackInfo2.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void*) {
+        deviceLostCallbackInfo.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void*) {
             auto cb = reinterpret_cast<F*>(callback_param);
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
             (*cb)(apiDevice, static_cast<DeviceLostReason>(reason), message);
             apiDevice.MoveToCHandle();
         };
-        deviceLostCallbackInfo2.userdata1 = reinterpret_cast<void*>(+callback);
-        deviceLostCallbackInfo2.userdata2 = nullptr;
+        deviceLostCallbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
+        deviceLostCallbackInfo.userdata2 = nullptr;
     } else {
         auto* lambda = new L(std::move(callback));
-        deviceLostCallbackInfo2.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void*) {
+        deviceLostCallbackInfo.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void*) {
             std::unique_ptr<L> the_lambda(reinterpret_cast<L*>(callback_param));
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
             (*the_lambda)(apiDevice, static_cast<DeviceLostReason>(reason), detail::StringViewAdapter(message));
             apiDevice.MoveToCHandle();
         };
-        deviceLostCallbackInfo2.userdata1 = reinterpret_cast<void*>(lambda);
-        deviceLostCallbackInfo2.userdata2 = nullptr;
+        deviceLostCallbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
+        deviceLostCallbackInfo.userdata2 = nullptr;
     }
 }
 
 template <typename F, typename T, typename Cb, typename CbChar, typename>
 void DeviceDescriptor::SetUncapturedErrorCallback(F callback, T userdata) {
     if constexpr (std::is_convertible_v<F, Cb*>) {
-        uncapturedErrorCallbackInfo2.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void* userdata_param) {
+        uncapturedErrorCallbackInfo.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void* userdata_param) {
             auto cb = reinterpret_cast<Cb*>(callback_param);
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
@@ -7619,7 +7309,7 @@ void DeviceDescriptor::SetUncapturedErrorCallback(F callback, T userdata) {
             apiDevice.MoveToCHandle();
         };
     } else {
-        uncapturedErrorCallbackInfo2.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void* userdata_param) {
+        uncapturedErrorCallbackInfo.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void* userdata_param) {
             auto cb = reinterpret_cast<CbChar*>(callback_param);
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
@@ -7627,8 +7317,8 @@ void DeviceDescriptor::SetUncapturedErrorCallback(F callback, T userdata) {
             apiDevice.MoveToCHandle();
         };
     }
-    uncapturedErrorCallbackInfo2.userdata1 = reinterpret_cast<void*>(+callback);
-    uncapturedErrorCallbackInfo2.userdata2 = reinterpret_cast<void*>(userdata);
+    uncapturedErrorCallbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
+    uncapturedErrorCallbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
 }
 
 template <typename L, typename Cb, typename CbChar, typename>
@@ -7638,7 +7328,7 @@ void DeviceDescriptor::SetUncapturedErrorCallback(L callback) {
     static_assert(std::is_convertible_v<L, F*> || std::is_convertible_v<L, FChar*>, "Uncaptured error callback cannot be a binding lambda");
 
     if constexpr (std::is_convertible_v<L, F*>) {
-        uncapturedErrorCallbackInfo2.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void*) {
+        uncapturedErrorCallbackInfo.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void*) {
             auto cb = reinterpret_cast<F*>(callback_param);
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
@@ -7646,7 +7336,7 @@ void DeviceDescriptor::SetUncapturedErrorCallback(L callback) {
             apiDevice.MoveToCHandle();
         };
     } else {
-        uncapturedErrorCallbackInfo2.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void*) {
+        uncapturedErrorCallbackInfo.callback = [](WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void* callback_param, void*) {
             auto cb = reinterpret_cast<FChar*>(callback_param);
             // We manually acquire and release the device to avoid changing any ref counts.
             auto apiDevice = Device::Acquire(*device);
@@ -7654,8 +7344,8 @@ void DeviceDescriptor::SetUncapturedErrorCallback(L callback) {
             apiDevice.MoveToCHandle();
         };
     }
-    uncapturedErrorCallbackInfo2.userdata1 = reinterpret_cast<void*>(+callback);
-    uncapturedErrorCallbackInfo2.userdata2 = nullptr;
+    uncapturedErrorCallbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
+    uncapturedErrorCallbackInfo.userdata2 = nullptr;
 }
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -7672,8 +7362,8 @@ void Adapter::GetFeatures(SupportedFeatures * features) const {
     *features = SupportedFeatures();
     wgpuAdapterGetFeatures(Get(), reinterpret_cast<WGPUSupportedFeatures * >(features));
 }
-ConvertibleStatus Adapter::GetFormatCapabilities(TextureFormat format, FormatCapabilities * capabilities) const {
-    auto result = wgpuAdapterGetFormatCapabilities(Get(), static_cast<WGPUTextureFormat>(format), reinterpret_cast<WGPUFormatCapabilities * >(capabilities));
+ConvertibleStatus Adapter::GetFormatCapabilities(TextureFormat format, DawnFormatCapabilities * capabilities) const {
+    auto result = wgpuAdapterGetFormatCapabilities(Get(), static_cast<WGPUTextureFormat>(format), reinterpret_cast<WGPUDawnFormatCapabilities * >(capabilities));
     return static_cast<Status>(result);
 }
 ConvertibleStatus Adapter::GetInfo(AdapterInfo * info) const {
@@ -7693,15 +7383,12 @@ Bool Adapter::HasFeature(FeatureName feature) const {
     auto result = wgpuAdapterHasFeature(Get(), static_cast<WGPUFeatureName>(feature));
     return result;
 }
-void Adapter::RequestDevice(DeviceDescriptor const * descriptor, RequestDeviceCallback callback, void * userdata) const {
-    wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(descriptor), callback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future Adapter::RequestDevice(DeviceDescriptor const * options, CallbackMode callbackMode, F callback, T userdata) const {
-    WGPURequestDeviceCallbackInfo2 callbackInfo = {};
+    WGPURequestDeviceCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message, void* callback_param, void* userdata_param) {
@@ -7719,7 +7406,7 @@ Future Adapter::RequestDevice(DeviceDescriptor const * options, CallbackMode cal
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuAdapterRequestDevice2(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(options), callbackInfo);
+    auto result = wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(options), callbackInfo);
     return Future {
         result.id
     };
@@ -7729,9 +7416,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future Adapter::RequestDevice(DeviceDescriptor const * options, CallbackMode callbackMode, L callback) const {
-    using F = RequestDeviceCallback2<void>;
+    using F = RequestDeviceCallback<void>;
 
-    WGPURequestDeviceCallbackInfo2 callbackInfo = {};
+    WGPURequestDeviceCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message, void* callback_param, void*) {
@@ -7743,7 +7430,7 @@ Future Adapter::RequestDevice(DeviceDescriptor const * options, CallbackMode cal
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuAdapterRequestDevice2(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(options), callbackInfo);
+        auto result = wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(options), callbackInfo);
         return Future {
             result.id
         };
@@ -7755,17 +7442,11 @@ Future Adapter::RequestDevice(DeviceDescriptor const * options, CallbackMode cal
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuAdapterRequestDevice2(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(options), callbackInfo);
+        auto result = wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(options), callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future Adapter::RequestDevice(DeviceDescriptor const * options, RequestDeviceCallbackInfo callbackInfo) const {
-    auto result = wgpuAdapterRequestDeviceF(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(options), *reinterpret_cast<WGPURequestDeviceCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 
 
@@ -7847,15 +7528,12 @@ BufferUsage Buffer::GetUsage() const {
     auto result = wgpuBufferGetUsage(Get());
     return static_cast<BufferUsage>(result);
 }
-void Buffer::MapAsync(MapMode mode, size_t offset, size_t size, BufferMapCallback callback, void * userdata) const {
-    wgpuBufferMapAsync(Get(), static_cast<WGPUMapMode>(mode), offset, size, callback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future Buffer::MapAsync(MapMode mode, size_t offset, size_t size, CallbackMode callbackMode, F callback, T userdata) const {
-    WGPUBufferMapCallbackInfo2 callbackInfo = {};
+    WGPUBufferMapCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPUMapAsyncStatus status, WGPUStringView message, void* callback_param, void* userdata_param) {
@@ -7873,7 +7551,7 @@ Future Buffer::MapAsync(MapMode mode, size_t offset, size_t size, CallbackMode c
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuBufferMapAsync2(Get(), static_cast<WGPUMapMode>(mode), offset, size, callbackInfo);
+    auto result = wgpuBufferMapAsync(Get(), static_cast<WGPUMapMode>(mode), offset, size, callbackInfo);
     return Future {
         result.id
     };
@@ -7883,9 +7561,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future Buffer::MapAsync(MapMode mode, size_t offset, size_t size, CallbackMode callbackMode, L callback) const {
-    using F = BufferMapCallback2<void>;
+    using F = BufferMapCallback<void>;
 
-    WGPUBufferMapCallbackInfo2 callbackInfo = {};
+    WGPUBufferMapCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPUMapAsyncStatus status, WGPUStringView message, void* callback_param, void*) {
@@ -7897,7 +7575,7 @@ Future Buffer::MapAsync(MapMode mode, size_t offset, size_t size, CallbackMode c
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuBufferMapAsync2(Get(), static_cast<WGPUMapMode>(mode), offset, size, callbackInfo);
+        auto result = wgpuBufferMapAsync(Get(), static_cast<WGPUMapMode>(mode), offset, size, callbackInfo);
         return Future {
             result.id
         };
@@ -7909,17 +7587,11 @@ Future Buffer::MapAsync(MapMode mode, size_t offset, size_t size, CallbackMode c
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuBufferMapAsync2(Get(), static_cast<WGPUMapMode>(mode), offset, size, callbackInfo);
+        auto result = wgpuBufferMapAsync(Get(), static_cast<WGPUMapMode>(mode), offset, size, callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future Buffer::MapAsync(MapMode mode, size_t offset, size_t size, BufferMapCallbackInfo callbackInfo) const {
-    auto result = wgpuBufferMapAsyncF(Get(), static_cast<WGPUMapMode>(mode), offset, size, *reinterpret_cast<WGPUBufferMapCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 void Buffer::SetLabel(StringView label) const {
     wgpuBufferSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
@@ -8123,15 +7795,12 @@ ComputePipeline Device::CreateComputePipeline(ComputePipelineDescriptor const * 
     auto result = wgpuDeviceCreateComputePipeline(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor));
     return ComputePipeline::Acquire(result);
 }
-void Device::CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CreateComputePipelineAsyncCallback callback, void * userdata) const {
-    wgpuDeviceCreateComputePipelineAsync(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), callback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future Device::CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CallbackMode callbackMode, F callback, T userdata) const {
-    WGPUCreateComputePipelineAsyncCallbackInfo2 callbackInfo = {};
+    WGPUCreateComputePipelineAsyncCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, WGPUStringView message, void* callback_param, void* userdata_param) {
@@ -8149,7 +7818,7 @@ Future Device::CreateComputePipelineAsync(ComputePipelineDescriptor const * desc
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuDeviceCreateComputePipelineAsync2(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), callbackInfo);
+    auto result = wgpuDeviceCreateComputePipelineAsync(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), callbackInfo);
     return Future {
         result.id
     };
@@ -8159,9 +7828,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future Device::CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CallbackMode callbackMode, L callback) const {
-    using F = CreateComputePipelineAsyncCallback2<void>;
+    using F = CreateComputePipelineAsyncCallback<void>;
 
-    WGPUCreateComputePipelineAsyncCallbackInfo2 callbackInfo = {};
+    WGPUCreateComputePipelineAsyncCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, WGPUStringView message, void* callback_param, void*) {
@@ -8173,7 +7842,7 @@ Future Device::CreateComputePipelineAsync(ComputePipelineDescriptor const * desc
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuDeviceCreateComputePipelineAsync2(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), callbackInfo);
+        auto result = wgpuDeviceCreateComputePipelineAsync(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), callbackInfo);
         return Future {
             result.id
         };
@@ -8185,17 +7854,11 @@ Future Device::CreateComputePipelineAsync(ComputePipelineDescriptor const * desc
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuDeviceCreateComputePipelineAsync2(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), callbackInfo);
+        auto result = wgpuDeviceCreateComputePipelineAsync(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future Device::CreateComputePipelineAsync(ComputePipelineDescriptor const * descriptor, CreateComputePipelineAsyncCallbackInfo callbackInfo) const {
-    auto result = wgpuDeviceCreateComputePipelineAsyncF(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const * >(descriptor), *reinterpret_cast<WGPUCreateComputePipelineAsyncCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 Buffer Device::CreateErrorBuffer(BufferDescriptor const * descriptor) const {
     auto result = wgpuDeviceCreateErrorBuffer(Get(), reinterpret_cast<WGPUBufferDescriptor const * >(descriptor));
@@ -8233,15 +7896,12 @@ RenderPipeline Device::CreateRenderPipeline(RenderPipelineDescriptor const * des
     auto result = wgpuDeviceCreateRenderPipeline(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor));
     return RenderPipeline::Acquire(result);
 }
-void Device::CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CreateRenderPipelineAsyncCallback callback, void * userdata) const {
-    wgpuDeviceCreateRenderPipelineAsync(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), callback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future Device::CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CallbackMode callbackMode, F callback, T userdata) const {
-    WGPUCreateRenderPipelineAsyncCallbackInfo2 callbackInfo = {};
+    WGPUCreateRenderPipelineAsyncCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, WGPUStringView message, void* callback_param, void* userdata_param) {
@@ -8259,7 +7919,7 @@ Future Device::CreateRenderPipelineAsync(RenderPipelineDescriptor const * descri
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuDeviceCreateRenderPipelineAsync2(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), callbackInfo);
+    auto result = wgpuDeviceCreateRenderPipelineAsync(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), callbackInfo);
     return Future {
         result.id
     };
@@ -8269,9 +7929,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future Device::CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CallbackMode callbackMode, L callback) const {
-    using F = CreateRenderPipelineAsyncCallback2<void>;
+    using F = CreateRenderPipelineAsyncCallback<void>;
 
-    WGPUCreateRenderPipelineAsyncCallbackInfo2 callbackInfo = {};
+    WGPUCreateRenderPipelineAsyncCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, WGPUStringView message, void* callback_param, void*) {
@@ -8283,7 +7943,7 @@ Future Device::CreateRenderPipelineAsync(RenderPipelineDescriptor const * descri
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuDeviceCreateRenderPipelineAsync2(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), callbackInfo);
+        auto result = wgpuDeviceCreateRenderPipelineAsync(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), callbackInfo);
         return Future {
             result.id
         };
@@ -8295,17 +7955,11 @@ Future Device::CreateRenderPipelineAsync(RenderPipelineDescriptor const * descri
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuDeviceCreateRenderPipelineAsync2(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), callbackInfo);
+        auto result = wgpuDeviceCreateRenderPipelineAsync(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future Device::CreateRenderPipelineAsync(RenderPipelineDescriptor const * descriptor, CreateRenderPipelineAsyncCallbackInfo callbackInfo) const {
-    auto result = wgpuDeviceCreateRenderPipelineAsyncF(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const * >(descriptor), *reinterpret_cast<WGPUCreateRenderPipelineAsyncCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 Sampler Device::CreateSampler(SamplerDescriptor const * descriptor) const {
     auto result = wgpuDeviceCreateSampler(Get(), reinterpret_cast<WGPUSamplerDescriptor const * >(descriptor));
@@ -8375,15 +8029,12 @@ SharedTextureMemory Device::ImportSharedTextureMemory(SharedTextureMemoryDescrip
 void Device::InjectError(ErrorType type, StringView message) const {
     wgpuDeviceInjectError(Get(), static_cast<WGPUErrorType>(type), *reinterpret_cast<WGPUStringView const*>(&message));
 }
-void Device::PopErrorScope(ErrorCallback oldCallback, void * userdata) const {
-    wgpuDevicePopErrorScope(Get(), oldCallback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future Device::PopErrorScope(CallbackMode callbackMode, F callback, T userdata) const {
-    WGPUPopErrorScopeCallbackInfo2 callbackInfo = {};
+    WGPUPopErrorScopeCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPUPopErrorScopeStatus status, WGPUErrorType type, WGPUStringView message, void* callback_param, void* userdata_param) {
@@ -8401,7 +8052,7 @@ Future Device::PopErrorScope(CallbackMode callbackMode, F callback, T userdata) 
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuDevicePopErrorScope2(Get(), callbackInfo);
+    auto result = wgpuDevicePopErrorScope(Get(), callbackInfo);
     return Future {
         result.id
     };
@@ -8411,9 +8062,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future Device::PopErrorScope(CallbackMode callbackMode, L callback) const {
-    using F = PopErrorScopeCallback2<void>;
+    using F = PopErrorScopeCallback<void>;
 
-    WGPUPopErrorScopeCallbackInfo2 callbackInfo = {};
+    WGPUPopErrorScopeCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPUPopErrorScopeStatus status, WGPUErrorType type, WGPUStringView message, void* callback_param, void*) {
@@ -8425,7 +8076,7 @@ Future Device::PopErrorScope(CallbackMode callbackMode, L callback) const {
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuDevicePopErrorScope2(Get(), callbackInfo);
+        auto result = wgpuDevicePopErrorScope(Get(), callbackInfo);
         return Future {
             result.id
         };
@@ -8437,17 +8088,11 @@ Future Device::PopErrorScope(CallbackMode callbackMode, L callback) const {
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuDevicePopErrorScope2(Get(), callbackInfo);
+        auto result = wgpuDevicePopErrorScope(Get(), callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future Device::PopErrorScope(PopErrorScopeCallbackInfo callbackInfo) const {
-    auto result = wgpuDevicePopErrorScopeF(Get(), *reinterpret_cast<WGPUPopErrorScopeCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 void Device::PushErrorScope(ErrorFilter filter) const {
     wgpuDevicePushErrorScope(Get(), static_cast<WGPUErrorFilter>(filter));
@@ -8525,15 +8170,12 @@ Bool Instance::HasWGSLLanguageFeature(WGSLFeatureName feature) const {
 void Instance::ProcessEvents() const {
     wgpuInstanceProcessEvents(Get());
 }
-void Instance::RequestAdapter(RequestAdapterOptions const * options, RequestAdapterCallback callback, void * userdata) const {
-    wgpuInstanceRequestAdapter(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), callback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future Instance::RequestAdapter(RequestAdapterOptions const * options, CallbackMode callbackMode, F callback, T userdata) const {
-    WGPURequestAdapterCallbackInfo2 callbackInfo = {};
+    WGPURequestAdapterCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPURequestAdapterStatus status, WGPUAdapter adapter, WGPUStringView message, void* callback_param, void* userdata_param) {
@@ -8551,7 +8193,7 @@ Future Instance::RequestAdapter(RequestAdapterOptions const * options, CallbackM
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuInstanceRequestAdapter2(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), callbackInfo);
+    auto result = wgpuInstanceRequestAdapter(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), callbackInfo);
     return Future {
         result.id
     };
@@ -8561,9 +8203,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future Instance::RequestAdapter(RequestAdapterOptions const * options, CallbackMode callbackMode, L callback) const {
-    using F = RequestAdapterCallback2<void>;
+    using F = RequestAdapterCallback<void>;
 
-    WGPURequestAdapterCallbackInfo2 callbackInfo = {};
+    WGPURequestAdapterCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPURequestAdapterStatus status, WGPUAdapter adapter, WGPUStringView message, void* callback_param, void*) {
@@ -8575,7 +8217,7 @@ Future Instance::RequestAdapter(RequestAdapterOptions const * options, CallbackM
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuInstanceRequestAdapter2(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), callbackInfo);
+        auto result = wgpuInstanceRequestAdapter(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), callbackInfo);
         return Future {
             result.id
         };
@@ -8587,17 +8229,11 @@ Future Instance::RequestAdapter(RequestAdapterOptions const * options, CallbackM
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuInstanceRequestAdapter2(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), callbackInfo);
+        auto result = wgpuInstanceRequestAdapter(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future Instance::RequestAdapter(RequestAdapterOptions const * options, RequestAdapterCallbackInfo callbackInfo) const {
-    auto result = wgpuInstanceRequestAdapterF(Get(), reinterpret_cast<WGPURequestAdapterOptions const * >(options), *reinterpret_cast<WGPURequestAdapterCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 WaitStatus Instance::WaitAny(size_t futureCount, FutureWaitInfo * futures, uint64_t timeoutNS) const {
     auto result = wgpuInstanceWaitAny(Get(), futureCount, reinterpret_cast<WGPUFutureWaitInfo * >(futures), timeoutNS);
@@ -8681,15 +8317,12 @@ void Queue::CopyExternalTextureForBrowser(ImageCopyExternalTexture const * sourc
 void Queue::CopyTextureForBrowser(ImageCopyTexture const * source, ImageCopyTexture const * destination, Extent3D const * copySize, CopyTextureForBrowserOptions const * options) const {
     wgpuQueueCopyTextureForBrowser(Get(), reinterpret_cast<WGPUImageCopyTexture const * >(source), reinterpret_cast<WGPUImageCopyTexture const * >(destination), reinterpret_cast<WGPUExtent3D const * >(copySize), reinterpret_cast<WGPUCopyTextureForBrowserOptions const * >(options));
 }
-void Queue::OnSubmittedWorkDone(QueueWorkDoneCallback callback, void * userdata) const {
-    wgpuQueueOnSubmittedWorkDone(Get(), callback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future Queue::OnSubmittedWorkDone(CallbackMode callbackMode, F callback, T userdata) const {
-    WGPUQueueWorkDoneCallbackInfo2 callbackInfo = {};
+    WGPUQueueWorkDoneCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPUQueueWorkDoneStatus status, void* callback_param, void* userdata_param) {
@@ -8704,7 +8337,7 @@ Future Queue::OnSubmittedWorkDone(CallbackMode callbackMode, F callback, T userd
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuQueueOnSubmittedWorkDone2(Get(), callbackInfo);
+    auto result = wgpuQueueOnSubmittedWorkDone(Get(), callbackInfo);
     return Future {
         result.id
     };
@@ -8714,9 +8347,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future Queue::OnSubmittedWorkDone(CallbackMode callbackMode, L callback) const {
-    using F = QueueWorkDoneCallback2<void>;
+    using F = QueueWorkDoneCallback<void>;
 
-    WGPUQueueWorkDoneCallbackInfo2 callbackInfo = {};
+    WGPUQueueWorkDoneCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPUQueueWorkDoneStatus status, void* callback_param, void*) {
@@ -8725,7 +8358,7 @@ Future Queue::OnSubmittedWorkDone(CallbackMode callbackMode, L callback) const {
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuQueueOnSubmittedWorkDone2(Get(), callbackInfo);
+        auto result = wgpuQueueOnSubmittedWorkDone(Get(), callbackInfo);
         return Future {
             result.id
         };
@@ -8737,17 +8370,11 @@ Future Queue::OnSubmittedWorkDone(CallbackMode callbackMode, L callback) const {
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuQueueOnSubmittedWorkDone2(Get(), callbackInfo);
+        auto result = wgpuQueueOnSubmittedWorkDone(Get(), callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future Queue::OnSubmittedWorkDone(QueueWorkDoneCallbackInfo callbackInfo) const {
-    auto result = wgpuQueueOnSubmittedWorkDoneF(Get(), *reinterpret_cast<WGPUQueueWorkDoneCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 void Queue::SetLabel(StringView label) const {
     wgpuQueueSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
@@ -8988,15 +8615,12 @@ static_assert(alignof(Sampler) == alignof(WGPUSampler), "alignof mismatch for Sa
 
 // ShaderModule implementation
 
-void ShaderModule::GetCompilationInfo(CompilationInfoCallback callback, void * userdata) const {
-    wgpuShaderModuleGetCompilationInfo(Get(), callback, userdata);
-}
 template <typename F, typename T,
           typename Cb,
           typename CbChar,
           typename>
 Future ShaderModule::GetCompilationInfo(CallbackMode callbackMode, F callback, T userdata) const {
-    WGPUCompilationInfoCallbackInfo2 callbackInfo = {};
+    WGPUCompilationInfoCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<F, Cb*>) {
         callbackInfo.callback = [](WGPUCompilationInfoRequestStatus status, WGPUCompilationInfo const * compilationInfo, void* callback_param, void* userdata_param) {
@@ -9011,7 +8635,7 @@ Future ShaderModule::GetCompilationInfo(CallbackMode callbackMode, F callback, T
     }
     callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
     callbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    auto result = wgpuShaderModuleGetCompilationInfo2(Get(), callbackInfo);
+    auto result = wgpuShaderModuleGetCompilationInfo(Get(), callbackInfo);
     return Future {
         result.id
     };
@@ -9021,9 +8645,9 @@ template <typename L,
           typename CbChar,
           typename>
 Future ShaderModule::GetCompilationInfo(CallbackMode callbackMode, L callback) const {
-    using F = CompilationInfoCallback2<void>;
+    using F = CompilationInfoCallback<void>;
 
-    WGPUCompilationInfoCallbackInfo2 callbackInfo = {};
+    WGPUCompilationInfoCallbackInfo callbackInfo = {};
     callbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
     if constexpr (std::is_convertible_v<L, F*>) {
         callbackInfo.callback = [](WGPUCompilationInfoRequestStatus status, WGPUCompilationInfo const * compilationInfo, void* callback_param, void*) {
@@ -9032,7 +8656,7 @@ Future ShaderModule::GetCompilationInfo(CallbackMode callbackMode, L callback) c
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuShaderModuleGetCompilationInfo2(Get(), callbackInfo);
+        auto result = wgpuShaderModuleGetCompilationInfo(Get(), callbackInfo);
         return Future {
             result.id
         };
@@ -9044,17 +8668,11 @@ Future ShaderModule::GetCompilationInfo(CallbackMode callbackMode, L callback) c
         };
         callbackInfo.userdata1 = reinterpret_cast<void*>(lambda);
         callbackInfo.userdata2 = nullptr;
-        auto result = wgpuShaderModuleGetCompilationInfo2(Get(), callbackInfo);
+        auto result = wgpuShaderModuleGetCompilationInfo(Get(), callbackInfo);
         return Future {
             result.id
         };
     }
-}
-Future ShaderModule::GetCompilationInfo(CompilationInfoCallbackInfo callbackInfo) const {
-    auto result = wgpuShaderModuleGetCompilationInfoF(Get(), *reinterpret_cast<WGPUCompilationInfoCallbackInfo const*>(&callbackInfo));
-    return Future {
-            result.id
-        };
 }
 void ShaderModule::SetLabel(StringView label) const {
     wgpuShaderModuleSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
@@ -9298,6 +8916,15 @@ static_assert(alignof(TextureView) == alignof(WGPUTextureView), "alignof mismatc
 
 
 
+// DrmFormatCapabilities is deprecated.
+// Use DawnDrmFormatCapabilities instead.
+using DrmFormatCapabilities = DawnDrmFormatCapabilities;
+// DrmFormatProperties is deprecated.
+// Use DawnDrmFormatProperties instead.
+using DrmFormatProperties = DawnDrmFormatProperties;
+// FormatCapabilities is deprecated.
+// Use DawnFormatCapabilities instead.
+using FormatCapabilities = DawnFormatCapabilities;
 // RenderPassDescriptorMaxDrawCount is deprecated.
 // Use RenderPassMaxDrawCount instead.
 using RenderPassDescriptorMaxDrawCount = RenderPassMaxDrawCount;

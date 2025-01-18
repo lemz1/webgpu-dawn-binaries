@@ -276,44 +276,6 @@ namespace wgpu {
       return o;
   }
   template <typename CharT, typename Traits>
-  std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>& o, BufferMapAsyncStatus value) {
-      switch (value) {
-      case BufferMapAsyncStatus::Success:
-        o << "BufferMapAsyncStatus::Success";
-        break;
-      case BufferMapAsyncStatus::InstanceDropped:
-        o << "BufferMapAsyncStatus::InstanceDropped";
-        break;
-      case BufferMapAsyncStatus::ValidationError:
-        o << "BufferMapAsyncStatus::ValidationError";
-        break;
-      case BufferMapAsyncStatus::Unknown:
-        o << "BufferMapAsyncStatus::Unknown";
-        break;
-      case BufferMapAsyncStatus::DeviceLost:
-        o << "BufferMapAsyncStatus::DeviceLost";
-        break;
-      case BufferMapAsyncStatus::DestroyedBeforeCallback:
-        o << "BufferMapAsyncStatus::DestroyedBeforeCallback";
-        break;
-      case BufferMapAsyncStatus::UnmappedBeforeCallback:
-        o << "BufferMapAsyncStatus::UnmappedBeforeCallback";
-        break;
-      case BufferMapAsyncStatus::MappingAlreadyPending:
-        o << "BufferMapAsyncStatus::MappingAlreadyPending";
-        break;
-      case BufferMapAsyncStatus::OffsetOutOfRange:
-        o << "BufferMapAsyncStatus::OffsetOutOfRange";
-        break;
-      case BufferMapAsyncStatus::SizeOutOfRange:
-        o << "BufferMapAsyncStatus::SizeOutOfRange";
-        break;
-          default:
-            o << "BufferMapAsyncStatus::" << std::showbase << std::hex << std::setfill('0') << std::setw(4) << static_cast<typename std::underlying_type<BufferMapAsyncStatus>::type>(value);
-      }
-      return o;
-  }
-  template <typename CharT, typename Traits>
   std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>& o, BufferMapState value) {
       switch (value) {
       case BufferMapState::Unmapped:
@@ -717,11 +679,11 @@ namespace wgpu {
       case FeatureName::R8UnormStorage:
         o << "FeatureName::R8UnormStorage";
         break;
-      case FeatureName::FormatCapabilities:
-        o << "FeatureName::FormatCapabilities";
+      case FeatureName::DawnFormatCapabilities:
+        o << "FeatureName::DawnFormatCapabilities";
         break;
-      case FeatureName::DrmFormatCapabilities:
-        o << "FeatureName::DrmFormatCapabilities";
+      case FeatureName::DawnDrmFormatCapabilities:
+        o << "FeatureName::DawnDrmFormatCapabilities";
         break;
       case FeatureName::Norm16TextureFormats:
         o << "FeatureName::Norm16TextureFormats";
@@ -1052,9 +1014,6 @@ namespace wgpu {
       case QueueWorkDoneStatus::Unknown:
         o << "QueueWorkDoneStatus::Unknown";
         break;
-      case QueueWorkDoneStatus::DeviceLost:
-        o << "QueueWorkDoneStatus::DeviceLost";
-        break;
           default:
             o << "QueueWorkDoneStatus::" << std::showbase << std::hex << std::setfill('0') << std::setw(4) << static_cast<typename std::underlying_type<QueueWorkDoneStatus>::type>(value);
       }
@@ -1214,8 +1173,8 @@ namespace wgpu {
       case SType::DawnWGSLBlocklist:
         o << "SType::DawnWGSLBlocklist";
         break;
-      case SType::DrmFormatCapabilities:
-        o << "SType::DrmFormatCapabilities";
+      case SType::DawnDrmFormatCapabilities:
+        o << "SType::DawnDrmFormatCapabilities";
         break;
       case SType::ShaderModuleCompilationOptions:
         o << "SType::ShaderModuleCompilationOptions";
